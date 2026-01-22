@@ -1,0 +1,24 @@
+server:
+  port: 3000
+  mode: debug
+
+database:
+  # user:password@tcp(host:port)/dbname?charset=utf8mb4&parseTime=True&loc=Local
+  dsn: "root:123456@tcp(127.0.0.1:3306)/smart?charset=utf8mb4&parseTime=True&loc=Local"
+
+jwt:
+  secret: "smart_butler_secret_key"
+  expire: 2592000 # 30d
+
+auth:
+  public_paths:
+    - "/app/auth/login"
+    - "/system/menus/routes"
+    - '/system/menus/buttons'
+    - '/system/permissions/tree'
+    - '/tenant/tenants'
+    - '/system/roles'
+    - '/system/dicts'
+    - "/app/dosc"
+    - "/app/ping"
+    - "/favicon.ico"

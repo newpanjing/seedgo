@@ -1,0 +1,45 @@
+docker/mysql/
+docker/redis/
+docker/mongodb/
+tmp/
+.vscode
+.idea
+.trae
+.currsor
+.qoder
+
+config/*-prod.yaml
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+.env
+# 排除所有本地配置文件，但保留模板（建议你把 local-prod.yaml 改名为 local-prod.yaml.example 提交）
+config/local-*.yaml
+/vendor/
+
+# --- Frontend (Node/Vue) ---
+web/node_modules/
+web/dist/
+web/.env.local
+web/.env.development.local
+web/.env.test.local
+web/.env.production.local
+web/npm-debug.log*
+web/yarn-debug.log*
+web/yarn-error.log*
+web/.DS_Store
+
+# --- IDE & OS ---
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+thumbs.db

@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_server
+    restart: always
+    environment:
+      # 设置 root 密码
+      MYSQL_ROOT_PASSWORD: "123456"
+      # 可选：创建一个初始数据库
+      MYSQL_DATABASE: "smart"
+      # 设置时区
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      # 数据持久化：宿主机目录 : 容器内目录
+      - ./mysql/data:/var/lib/mysql
+      # 可选：挂载初始化的 SQL 脚本目录
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      # 可选：挂载配置文件
+      - ./mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
+    command: 
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
