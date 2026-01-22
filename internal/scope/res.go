@@ -8,9 +8,9 @@ import (
 
 // Response 统一 JSON 结构
 type Response struct {
-	Code    int         `json:"code"`    // 业务自定义状态码
-	Data    interface{} `json:"data"`    // 数据内容
-	Message string      `json:"message"` // 消息提示
+	Code    int         `json:"code"`           // 业务自定义状态码
+	Data    interface{} `json:"data,omitempty"` // 数据内容
+	Message string      `json:"message"`        // 消息提示
 }
 
 // PageResult 分页数据结构
