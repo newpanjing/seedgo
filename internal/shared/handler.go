@@ -1,48 +1,48 @@
 package shared
 
 import (
+	"log"
 	"seedgo/internal/model"
 	"seedgo/pkg/request"
 	"seedgo/pkg/response"
 	"seedgo/pkg/utils"
-	"log"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-type IController interface {
+type IHandler interface {
 	Use(g *gin.RouterGroup)
 	Create(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Delete(ctx *gin.Context)
 	Get(ctx *gin.Context)
 	List(ctx *gin.Context)
-	//给List查询之前添加条件
+	// BeforeList 给List查询之前添加条件
 	BeforeList(ctx *gin.Context) []func(*gorm.DB) *gorm.DB
 	BatchDelete(ctx *gin.Context)
 }
 
-type BaseCtrl[T any] struct {
+type BaseHandler[T any] struct {
 	Logic IBaseLogic[T]
 	Hook  HandlerHook[T]
-	Impl  IController
+	Impl  IHandler
 }
 
-// 创建一个NewBase的方法
-func NewBaseCtrl[T any](logic IBaseLogic[T], hook HandlerHook[T], impl IController) *BaseCtrl[T] {
+// NewBaseHandler 创建一个NewBase的方法
+func NewBaseHandler[T any](logic IBaseLogic[T], hook HandlerHook[T], impl IHandler) *BaseHandler[T] {
 	var finalHook = hook
 	if hook == nil {
 		finalHook = &DefaultHandlerHook[T]{}
 	}
-	return &BaseCtrl[T]{
+	return &BaseHandler[T]{
 		Logic: logic,
 		Hook:  finalHook,
 		Impl:  impl,
 	}
 }
 
-func (c *BaseCtrl[T]) Use(g *gin.RouterGroup) {
+func (c *BaseHandler[T]) Use(g *gin.RouterGroup) {
 
 	g.POST("/batch-delete", c.Impl.BatchDelete)
 	g.POST("", c.Impl.Create)
@@ -52,7 +52,7 @@ func (c *BaseCtrl[T]) Use(g *gin.RouterGroup) {
 	g.GET("", c.Impl.List)
 }
 
-func (c *BaseCtrl[T]) Create(ctx *gin.Context) {
+func (c *BaseHandler[T]) Create(ctx *gin.Context) {
 
 	var entity T
 	if err := ctx.ShouldBindJSON(&entity); err != nil {
@@ -68,14 +68,18 @@ func (c *BaseCtrl[T]) Create(ctx *gin.Context) {
 	response.Ok(ctx)
 }
 
-func (c *BaseCtrl[T]) Update(ctx *gin.Context) {
+func (c *BaseHandler[T]) Update(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
 	var entity T
 	if err := ctx.ShouldBindJSON(&entity); err != nil {
 		response.Fail(ctx, "Invalid parameters")
 		return
 	}
-	utils.SetFieldValue(&entity, "ID", id)
+	err := utils.SetFieldValue(&entity, "ID", id)
+	if err != nil {
+		response.Fail(ctx, err.Error())
+		return
+	}
 
 	if err := c.Logic.Update(ctx.Request.Context(), &entity); err != nil {
 		response.Fail(ctx, err.Error())
@@ -84,7 +88,7 @@ func (c *BaseCtrl[T]) Update(ctx *gin.Context) {
 	response.Ok(ctx)
 }
 
-func (c *BaseCtrl[T]) Delete(ctx *gin.Context) {
+func (c *BaseHandler[T]) Delete(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
 	if err := c.Logic.Delete(ctx.Request.Context(), id); err != nil {
 		response.Fail(ctx, err.Error())
@@ -93,7 +97,7 @@ func (c *BaseCtrl[T]) Delete(ctx *gin.Context) {
 	response.Ok(ctx)
 }
 
-func (c *BaseCtrl[T]) Get(ctx *gin.Context) {
+func (c *BaseHandler[T]) Get(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
 	entity, err := c.Logic.Get(ctx.Request.Context(), id)
 	if err != nil {
@@ -102,10 +106,10 @@ func (c *BaseCtrl[T]) Get(ctx *gin.Context) {
 	}
 	response.OkWithData(ctx, entity)
 }
-func (c *BaseCtrl[T]) BeforeList(ctx *gin.Context) []func(*gorm.DB) *gorm.DB {
+func (c *BaseHandler[T]) BeforeList(ctx *gin.Context) []func(*gorm.DB) *gorm.DB {
 	return []func(*gorm.DB) *gorm.DB{}
 }
-func (c *BaseCtrl[T]) List(ctx *gin.Context) {
+func (c *BaseHandler[T]) List(ctx *gin.Context) {
 
 	scopes := c.Impl.BeforeList(ctx)
 	queryPage := request.BindQuery(ctx)
@@ -120,7 +124,7 @@ func (c *BaseCtrl[T]) List(ctx *gin.Context) {
 	}
 }
 
-func (c *BaseCtrl[T]) BatchDelete(ctx *gin.Context) {
+func (c *BaseHandler[T]) BatchDelete(ctx *gin.Context) {
 	//post ids
 	type Post struct {
 		ids []string

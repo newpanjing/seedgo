@@ -8,18 +8,18 @@ import (
 	"gorm.io/gorm"
 )
 
-type RoleLogic struct {
+type Service struct {
 	shared.BaseLogic[model.Role]
 }
 
-func NewRoleLogic() *RoleLogic {
-	return &RoleLogic{
+func NewService() *Service {
+	return &Service{
 		BaseLogic: *shared.NewBaseLogic[model.Role](),
 	}
 }
 
 // 创建
-func (l *RoleLogic) Create(ctx context.Context, entity *model.Role) error {
+func (l *Service) Create(ctx context.Context, entity *model.Role) error {
 	return l.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 处理关联权限
 		if entity.PermissionIds != nil && len(*entity.PermissionIds) > 0 {
@@ -38,7 +38,7 @@ func (l *RoleLogic) Create(ctx context.Context, entity *model.Role) error {
 }
 
 // 更新
-func (l *RoleLogic) Update(ctx context.Context, entity *model.Role) error {
+func (l *Service) Update(ctx context.Context, entity *model.Role) error {
 	return l.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 更新基本信息
 		if err := tx.Omit("created_at").Save(entity).Error; err != nil {
@@ -62,7 +62,7 @@ func (l *RoleLogic) Update(ctx context.Context, entity *model.Role) error {
 	})
 }
 
-func (l *RoleLogic) Get(ctx context.Context, id model.ID) (*model.Role, error) {
+func (l *Service) Get(ctx context.Context, id model.ID) (*model.Role, error) {
 	var role model.Role
 	// 1. 只查角色基础信息
 	if err := l.DB.WithContext(ctx).First(&role, id).Error; err != nil {

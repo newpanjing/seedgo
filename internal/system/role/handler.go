@@ -8,28 +8,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type RoleCtrl struct {
-	*shared.BaseCtrl[model.Role]
+type Handler struct {
+	*shared.BaseHandler[model.Role]
 }
 
-func NewRoleCtrl() *RoleCtrl {
+func NewHandler() *Handler {
 
-	var ctr = &RoleCtrl{}
+	var ctr = &Handler{}
 
-	ctr.BaseCtrl = shared.NewBaseCtrl(NewRoleLogic(), nil, ctr)
+	ctr.BaseHandler = shared.NewBaseHandler(NewService(), nil, ctr)
 	return ctr
 }
 
-func (r *RoleCtrl) Use(g *gin.RouterGroup) {
+func (r *Handler) Use(g *gin.RouterGroup) {
 	//注册基本crud
-	r.BaseCtrl.Use(g)
+	r.BaseHandler.Use(g)
 	g.GET("/c", func(ctx *gin.Context) {})
 	g.GET("/d", func(ctx *gin.Context) {})
 	g.GET("/e", func(ctx *gin.Context) {})
 }
 
 // 实现Get方法
-func (c *RoleCtrl) Get(ctx *gin.Context) {
+func (c *Handler) Get(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
 	entity, err := c.Logic.Get(ctx.Request.Context(), id)
 	if err != nil {

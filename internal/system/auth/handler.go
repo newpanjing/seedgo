@@ -7,17 +7,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthCtrl struct {
-	authLogic *AuthLogic
+type Handler struct {
+	authLogic *Service
 }
 
-func NewAuthCtrl() *AuthCtrl {
-	return &AuthCtrl{
-		authLogic: NewAuthLogic(),
+func NewHandler() *Handler {
+	return &Handler{
+		authLogic: NewService(),
 	}
 }
 
-func (a *AuthCtrl) Use(g *gin.RouterGroup) {
+func (a *Handler) Use(g *gin.RouterGroup) {
 	g.POST("/login", a.Login)
 	g.GET("/me", a.GetMe)
 	g.POST("/profile", a.UpdateProfile)
@@ -25,7 +25,7 @@ func (a *AuthCtrl) Use(g *gin.RouterGroup) {
 	g.POST("/change-password", a.ChangePassword)
 }
 
-func (a *AuthCtrl) GetMe(ctx *gin.Context) {
+func (a *Handler) GetMe(ctx *gin.Context) {
 	user := request.GetCurrentUser(ctx)
 	//通过用户ID查询详情，包含角色，排除密码
 	userModel, err := a.authLogic.GetProfile(user.ID)
@@ -37,7 +37,7 @@ func (a *AuthCtrl) GetMe(ctx *gin.Context) {
 	response.OkWithData(ctx, userModel)
 }
 
-func (c *AuthCtrl) Login(ctx *gin.Context) {
+func (c *Handler) Login(ctx *gin.Context) {
 	var dto LoginDTO
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
 		response.Fail(ctx, "Invalid parameters")
@@ -53,7 +53,7 @@ func (c *AuthCtrl) Login(ctx *gin.Context) {
 	response.OkWithData(ctx, vo)
 }
 
-func (a *AuthCtrl) UpdateProfile(ctx *gin.Context) {
+func (a *Handler) UpdateProfile(ctx *gin.Context) {
 	var dto UpdateProfileDTO
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
 		response.Fail(ctx, "Invalid parameters")
@@ -69,7 +69,7 @@ func (a *AuthCtrl) UpdateProfile(ctx *gin.Context) {
 	response.Ok(ctx)
 }
 
-func (a *AuthCtrl) Logout(ctx *gin.Context) {
+func (a *Handler) Logout(ctx *gin.Context) {
 	user := request.GetCurrentUser(ctx)
 	if user != nil {
 		_ = a.authLogic.Logout(user.ID)
@@ -77,7 +77,7 @@ func (a *AuthCtrl) Logout(ctx *gin.Context) {
 	response.Ok(ctx)
 }
 
-func (a *AuthCtrl) ChangePassword(ctx *gin.Context) {
+func (a *Handler) ChangePassword(ctx *gin.Context) {
 	var dto ChangePasswordDTO
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
 		response.Fail(ctx, "Invalid parameters")

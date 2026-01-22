@@ -11,7 +11,7 @@ import (
 // ID 通用ID类型
 type ID int64
 
-// 创建一个方法将任意类型转换为id
+// ToID 创建一个方法将任意类型转换为id
 func ToID(value any) ID {
 	//转为字符串，再转为int64
 	idStr := fmt.Sprintf("%v", value)
@@ -27,15 +27,15 @@ func (id *ID) String() string {
 }
 
 type Entity interface {
-	//获取主键名
+	// GetPrimaryKey 获取主键名
 	GetPrimaryKey() string
-	//获取id
+	// GetID 获取id
 	GetID() ID
-	//设置id
+	// SetID 设置id
 	SetID(id ID)
 }
 
-// 租户类
+// TenantModel 租户类
 type TenantModel struct {
 	//修改禁止更新
 	TenantID ID `gorm:"column:tenant_id;<-:create" json:"tenantId"`
@@ -53,5 +53,5 @@ type BaseTenantModel struct {
 	TenantModel
 }
 
-// 租户ID 字段名
+// FieldTenantID 租户ID 字段名
 const FieldTenantID = "TenantID"

@@ -10,7 +10,7 @@ import (
 
 type UserCtrl struct {
 	logic *UserLogic
-	shared.BaseCtrl[model.User]
+	shared.BaseHandler[model.User]
 }
 
 func NewUserCtrl() *UserCtrl {
@@ -18,7 +18,7 @@ func NewUserCtrl() *UserCtrl {
 	ctrl := &UserCtrl{
 		logic: logic,
 	}
-	ctrl.BaseCtrl = *shared.NewBaseCtrl(logic, nil, ctrl)
+	ctrl.BaseHandler = *shared.NewBaseHandler(logic, nil, ctrl)
 	return ctrl
 }
 

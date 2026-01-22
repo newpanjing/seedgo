@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"context"
+	"net/http"
 	"seedgo/pkg/global"
 	"seedgo/pkg/request"
 	"seedgo/pkg/response"
 	"seedgo/pkg/utils"
-	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			}
 		}
 
-		// 这里可以实现Token验证逻辑
+		// 获取JWT Token
 		token := c.GetHeader("Authorization")
 		if token == "" {
 			response.FailWithCode(c, http.StatusUnauthorized, "Unauthorized")

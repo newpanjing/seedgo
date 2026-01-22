@@ -2,25 +2,25 @@ package perms
 
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"seedgo/internal/model"
 	"seedgo/internal/shared"
 	"seedgo/pkg/request"
 	"seedgo/pkg/response"
-	"log"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
 	logic *Service
-	shared.BaseCtrl[model.Permission]
+	shared.BaseHandler[model.Permission]
 }
 
 // 实现这个方法可以重新
 func (c *Handler) Use(g *gin.RouterGroup) {
 	g.GET("/tree", c.GetTree)
-	c.BaseCtrl.Use(g)
+	c.BaseHandler.Use(g)
 	log.Println("Registering perms routes")
 }
 
@@ -99,7 +99,7 @@ func NewHandler() *Handler {
 	ctrl := &Handler{
 		logic: logic,
 	}
-	ctrl.BaseCtrl = *shared.NewBaseCtrl(logic, nil, ctrl)
+	ctrl.BaseHandler = *shared.NewBaseHandler(logic, nil, ctrl)
 
 	return ctrl
 }

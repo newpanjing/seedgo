@@ -7,7 +7,7 @@ type HandlerHook[T any] interface {
 	AfterPage(ctx *gin.Context, items []T, total int64)
 }
 
-// 默认实现Hook接口
+// DefaultHandlerHook 默认实现Hook接口
 type DefaultHandlerHook[T any] struct{}
 
 func (h *DefaultHandlerHook[T]) BeforePage(ctx *gin.Context) {

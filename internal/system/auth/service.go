@@ -9,12 +9,12 @@ import (
 	"time"
 )
 
-type AuthLogic struct {
+type Service struct {
 	shared.BaseLogic[model.User]
 }
 
-func NewAuthLogic() *AuthLogic {
-	return &AuthLogic{
+func NewService() *Service {
+	return &Service{
 		BaseLogic: *shared.NewBaseLogic[model.User](),
 	}
 }
@@ -40,7 +40,7 @@ type ChangePasswordDTO struct {
 	NewPassword string `json:"newPassword" binding:"required"`
 }
 
-func (s *AuthLogic) Login(ctx context.Context, dto LoginDTO) (*LoginVO, error) {
+func (s *Service) Login(ctx context.Context, dto LoginDTO) (*LoginVO, error) {
 	user, err := s.FindByUsername(dto.Username)
 	if err != nil {
 		return nil, errors.New("invalid username or password")
@@ -77,22 +77,22 @@ func (s *AuthLogic) Login(ctx context.Context, dto LoginDTO) (*LoginVO, error) {
 }
 
 // FindByUsername find user by username
-func (s *AuthLogic) FindByUsername(username string) (*model.User, error) {
+func (s *Service) FindByUsername(username string) (*model.User, error) {
 	var user model.User
 	err := s.DB.First(&user, "username = ?", username).Error
 	return &user, err
 }
 
-func (s *AuthLogic) GetProfile(userID model.ID) (*model.User, error) {
+func (s *Service) GetProfile(userID model.ID) (*model.User, error) {
 	return s.FindByIdWithRoles(userID)
 }
 
-func (s *AuthLogic) FindByIdWithRoles(userID model.ID) (*model.User, error) {
+func (s *Service) FindByIdWithRoles(userID model.ID) (*model.User, error) {
 	var user model.User
 	err := s.DB.Preload("Roles").Omit("passwordHash").First(&user, userID).Error
 	return &user, err
 }
-func (s *AuthLogic) UpdateProfile(ctx context.Context, uid model.ID, dto UpdateProfileDTO) error {
+func (s *Service) UpdateProfile(ctx context.Context, uid model.ID, dto UpdateProfileDTO) error {
 	user, err := s.Get(ctx, uid)
 	if err != nil {
 		return err
@@ -103,7 +103,7 @@ func (s *AuthLogic) UpdateProfile(ctx context.Context, uid model.ID, dto UpdateP
 	return s.Update(ctx, user)
 }
 
-func (s *AuthLogic) ChangePassword(ctx context.Context, uid model.ID, dto ChangePasswordDTO) error {
+func (s *Service) ChangePassword(ctx context.Context, uid model.ID, dto ChangePasswordDTO) error {
 	user, err := s.Get(ctx, uid)
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func (s *AuthLogic) ChangePassword(ctx context.Context, uid model.ID, dto Change
 	return s.Update(ctx, user)
 }
 
-func (s *AuthLogic) Logout(uid model.ID) error {
+func (s *Service) Logout(uid model.ID) error {
 	// Implement any cleanup if necessary (e.g. invalidate token in redis)
 
 	return nil
