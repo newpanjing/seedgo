@@ -35,6 +35,11 @@ type Entity interface {
 	SetID(id ID)
 }
 
+// Searchable 支持关键字搜索的接口
+type Searchable interface {
+	SearchFields() []string
+}
+
 // TenantModel 租户类
 type TenantModel struct {
 	//修改禁止更新

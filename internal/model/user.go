@@ -30,3 +30,8 @@ type User struct {
 func (User) TableName() string {
 	return "user"
 }
+
+// SearchFields 返回搜索字段
+func (u *User) SearchFields() []string {
+	return []string{"username", "realName", "phone", "email"}
+}

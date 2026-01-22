@@ -111,6 +111,10 @@ func (c *BaseHandler[T]) BeforeList(ctx *gin.Context) []func(*gorm.DB) *gorm.DB 
 func (c *BaseHandler[T]) List(ctx *gin.Context) {
 
 	scopes := c.Impl.BeforeList(ctx)
+	// 自动从查询参数构建 Where 条件
+	var entity T
+	scopes = append(scopes, pkg.BuildQueryScope(ctx, &entity))
+
 	queryPage := pkg.BindQuery(ctx)
 	if items, total, err := c.Logic.Page(ctx.Request.Context(), *queryPage, scopes...); err != nil {
 		scope.Fail(ctx, err.Error())
