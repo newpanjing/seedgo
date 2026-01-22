@@ -43,3 +43,10 @@ web/.DS_Store
 *.sw?
 .DS_Store
 thumbs.db
+
+node_modules/
+dist/
+
+.git/
+
+
