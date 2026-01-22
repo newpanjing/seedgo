@@ -7,14 +7,14 @@ import (
 )
 
 type Service struct {
-	*shared.BaseLogic[model.Permission]
+	*shared.BaseService[model.Permission]
 }
 
 func NewService() *Service {
 	logic := &Service{
-		shared.NewBaseLogic[model.Permission](),
+		shared.NewBaseService[model.Permission](),
 	}
-	logic.DB = logic.BaseLogic.DB
+	logic.DB = logic.BaseService.DB
 	return logic
 }
 

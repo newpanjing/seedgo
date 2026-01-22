@@ -24,13 +24,13 @@ type IHandler interface {
 }
 
 type BaseHandler[T any] struct {
-	Logic IBaseLogic[T]
+	Logic IBaseService[T]
 	Hook  HandlerHook[T]
 	Impl  IHandler
 }
 
 // NewBaseHandler 创建一个NewBase的方法
-func NewBaseHandler[T any](logic IBaseLogic[T], hook HandlerHook[T], impl IHandler) *BaseHandler[T] {
+func NewBaseHandler[T any](logic IBaseService[T], hook HandlerHook[T], impl IHandler) *BaseHandler[T] {
 	var finalHook = hook
 	if hook == nil {
 		finalHook = &DefaultHandlerHook[T]{}

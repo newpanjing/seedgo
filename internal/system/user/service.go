@@ -8,19 +8,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserLogic struct {
-	*shared.BaseLogic[model.User]
+type Service struct {
+	*shared.BaseService[model.User]
 }
 
-func NewUserLogic() *UserLogic {
-	return &UserLogic{
-		BaseLogic: shared.NewBaseLogic[model.User](),
+func NewService() *Service {
+	return &Service{
+		BaseService: shared.NewBaseService[model.User](),
 	}
 }
 
-// 创建
-func (l *UserLogic) Create(ctx context.Context, entity *model.User) error {
-	return l.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+// Create 创建
+func (s *Service) Create(ctx context.Context, entity *model.User) error {
+	return s.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 处理关联角色
 		if entity.RoleIds != nil && len(*entity.RoleIds) > 0 {
 			var roles []*model.Role
@@ -37,9 +37,9 @@ func (l *UserLogic) Create(ctx context.Context, entity *model.User) error {
 	})
 }
 
-// 更新
-func (l *UserLogic) Update(ctx context.Context, entity *model.User) error {
-	return l.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+// Update 更新
+func (s *Service) Update(ctx context.Context, entity *model.User) error {
+	return s.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 更新基本信息
 		txChain := tx.Omit("created_at")
 		// 如果密码为空，不更新密码
@@ -68,14 +68,14 @@ func (l *UserLogic) Update(ctx context.Context, entity *model.User) error {
 	})
 }
 
-func (r *UserLogic) FindByUsername(username string) (*model.User, error) {
+func (s *Service) FindByUsername(username string) (*model.User, error) {
 	var user model.User
-	err := r.DB.Where("username = ?", username).Preload("Roles").First(&user).Error
+	err := s.DB.Where("username = ?", username).Preload("Roles").First(&user).Error
 	return &user, err
 }
 
-func (r *UserLogic) FindByIdWithRoles(id model.ID) (*model.User, error) {
+func (s *Service) FindByIdWithRoles(id model.ID) (*model.User, error) {
 	var user model.User
-	err := r.DB.Preload("Roles").Omit("passwordHash").First(&user, id).Error
+	err := s.DB.Preload("Roles").Omit("passwordHash").First(&user, id).Error
 	return &user, err
 }

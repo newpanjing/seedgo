@@ -10,12 +10,12 @@ import (
 )
 
 type Service struct {
-	shared.BaseLogic[model.User]
+	shared.BaseService[model.User]
 }
 
 func NewService() *Service {
 	return &Service{
-		BaseLogic: *shared.NewBaseLogic[model.User](),
+		BaseService: *shared.NewBaseService[model.User](),
 	}
 }
 

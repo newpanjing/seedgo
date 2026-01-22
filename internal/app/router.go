@@ -30,7 +30,7 @@ func InitRouter() *gin.Engine {
 		//权限资源
 		perms.NewHandler().Use(g.Group("system/permissions"))
 		//用户
-		user.NewUserCtrl().Use(g.Group("system/users"))
+		user.NewHandler().Use(g.Group("system/users"))
 		//角色
 		role.NewHandler().Use(g.Group("system/roles"))
 		//租户

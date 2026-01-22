@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type IBaseLogic[T any] interface {
+type IBaseService[T any] interface {
 	Create(ctx context.Context, entity *T) error
 	Update(ctx context.Context, entity *T) error
 	Delete(ctx context.Context, id model.ID) error
@@ -19,43 +19,43 @@ type IBaseLogic[T any] interface {
 	Page(ctx context.Context, query request.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error)
 }
 
-// 约束 T 必须实现 model.Entity 接口
-type BaseLogic[T any] struct {
+// BaseService 约束 T 必须实现 model.Entity 接口
+type BaseService[T any] struct {
 	DB *gorm.DB
 }
 
-func NewBaseLogic[T any]() *BaseLogic[T] {
-	return &BaseLogic[T]{
+func NewBaseService[T any]() *BaseService[T] {
+	return &BaseService[T]{
 		DB: global.DB,
 	}
 }
 
-func (s *BaseLogic[T]) Create(ctx context.Context, entity *T) error {
+func (s *BaseService[T]) Create(ctx context.Context, entity *T) error {
 	return s.DB.WithContext(ctx).Create(entity).Error
 }
 
-func (s *BaseLogic[T]) Update(ctx context.Context, entity *T) error {
+func (s *BaseService[T]) Update(ctx context.Context, entity *T) error {
 	return s.DB.WithContext(ctx).Omit("created_at").Save(entity).Error
 }
 
-func (s *BaseLogic[T]) Delete(ctx context.Context, id model.ID) error {
+func (s *BaseService[T]) Delete(ctx context.Context, id model.ID) error {
 	var entity T
 	return s.DB.WithContext(ctx).Delete(&entity, id).Error
 }
 
-func (s *BaseLogic[T]) Get(ctx context.Context, id model.ID) (*T, error) {
+func (s *BaseService[T]) Get(ctx context.Context, id model.ID) (*T, error) {
 	var entity T
 	err := s.DB.WithContext(ctx).First(&entity, id).Error
 	return &entity, err
 }
 
-func (s *BaseLogic[T]) List(ctx context.Context) ([]T, error) {
+func (s *BaseService[T]) List(ctx context.Context) ([]T, error) {
 	var entities []T
 	err := s.DB.WithContext(ctx).Find(&entities).Error
 	return entities, err
 }
 
-func (s *BaseLogic[T]) Page(ctx context.Context, query request.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error) {
+func (s *BaseService[T]) Page(ctx context.Context, query request.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error) {
 	var entities []T
 	var total int64
 

@@ -8,22 +8,22 @@ import (
 	"gorm.io/gorm"
 )
 
-type UserCtrl struct {
-	logic *UserLogic
+type Handler struct {
+	logic *Service
 	shared.BaseHandler[model.User]
 }
 
-func NewUserCtrl() *UserCtrl {
-	logic := NewUserLogic()
-	ctrl := &UserCtrl{
+func NewHandler() *Handler {
+	logic := NewService()
+	ctrl := &Handler{
 		logic: logic,
 	}
 	ctrl.BaseHandler = *shared.NewBaseHandler(logic, nil, ctrl)
 	return ctrl
 }
 
-// 重写BeforeList
-func (c *UserCtrl) BeforeList(ctx *gin.Context) []func(*gorm.DB) *gorm.DB {
+// BeforeList 重写BeforeList
+func (c *Handler) BeforeList(ctx *gin.Context) []func(*gorm.DB) *gorm.DB {
 	return []func(*gorm.DB) *gorm.DB{
 		func(d *gorm.DB) *gorm.DB {
 			return d.Preload("Roles", func(db *gorm.DB) *gorm.DB {

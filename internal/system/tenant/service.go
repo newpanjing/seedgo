@@ -11,12 +11,12 @@ import (
 )
 
 type TenantLogic struct {
-	*shared.BaseLogic[model.Tenant]
+	*shared.BaseService[model.Tenant]
 }
 
 func NewTenantLogic() *TenantLogic {
 	return &TenantLogic{
-		shared.NewBaseLogic[model.Tenant](),
+		shared.NewBaseService[model.Tenant](),
 	}
 }
 func (s *TenantLogic) Create(ctx context.Context, entity *model.Tenant) error {
