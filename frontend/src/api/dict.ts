@@ -65,7 +65,7 @@ export function deleteDict(id: number | string) {
 
 export function batchDeleteDicts(ids: (number | string)[]) {
   return request({
-    url: '/system/dicts/batch',
+    url: '/system/dicts/batch-delete',
     method: 'post',
     data: { ids }
   })

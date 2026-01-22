@@ -1,11 +1,11 @@
 <script setup lang="tsx">
 import { ref, reactive, computed } from 'vue'
 import { TableColumn } from '@/types/column'
-import { getDicts, createDict, updateDict, deleteDict, batchDeleteDicts, type Dict, type DictItem } from '@/api/dict'
+import { getDicts, createDict, updateDict, deleteDict, batchDeleteDicts, getDict, type Dict, type DictItem } from '@/api/dict'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
-import { showToast } from '@/lib/message'
+import { showConfirm, showToast } from '@/lib/message'
 import Form from '@/components/common/form/Form.vue'
 import FormItem from '@/components/common/form/FormItem.vue'
 import FormDialog from '@/components/common/form/FormDialog.vue'
@@ -83,17 +83,35 @@ const handleCreate = () => {
   isDialogOpen.value = true
 }
 
-const handleUpdate = (dict: Dict) => {
+const handleUpdate = async (dict: Dict) => {
+  // 1. 先回显基本信息并打开弹窗
   editingDict.value = dict
   form.code = dict.code
   form.name = dict.name
   form.description = dict.description || ''
-  // Deep copy items to avoid modifying original data before save
+  // 列表数据中可能没有 items，先置空或使用列表中的数据（如果列表已包含部分 items）
   form.items = (dict.items || []).map(i => ({ ...i }))
   isDialogOpen.value = true
+
+  // 2. 异步拉取完整详情
+  try {
+    const res = (await getDict(dict.id)) as unknown as Dict
+    // 再次确认当前编辑的 ID 是否一致（防止快速切换导致的数据错乱）
+    if (editingDict.value?.id === res.id) {
+      form.items = (res.items || []).map(i => ({ ...i }))
+      // 也可以更新其他可能在列表中不完整的字段
+      form.description = res.description || ''
+    }
+  } catch (e) {
+    console.error(e)
+    showToast('获取详情失败', { type: 'error' })
+  }
 }
 
 const handleDelete = async (dict: Dict) => {
+  const confirmed = await showConfirm('确认删除', `确定要删除字典 "${dict.name}" 吗？此操作不可恢复。`)
+  if (!confirmed) return
+
   await deleteDict(dict.id)
   showToast('删除成功')
   refreshTable()

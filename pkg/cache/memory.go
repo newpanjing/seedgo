@@ -94,7 +94,7 @@ func (c *MemoryCache) Clear(ctx context.Context) error {
 	return nil
 }
 
-// PrefixMemoryCache 支持前缀的装饰器（简单模拟）
+// Keys PrefixMemoryCache 支持前缀的装饰器（简单模拟）
 // 实际可以直接在 key 上加前缀，这里不做复杂封装
 func (c *MemoryCache) Keys(pattern string) []string {
 	c.mu.RLock()

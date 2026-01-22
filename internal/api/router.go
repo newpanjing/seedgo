@@ -3,6 +3,7 @@ package api
 import (
 	"seedgo/internal/middleware"
 	"seedgo/internal/modules/auth"
+	"seedgo/internal/modules/dict"
 	"seedgo/internal/modules/perms"
 	"seedgo/internal/modules/role"
 	"seedgo/internal/modules/tenant"
@@ -35,6 +36,8 @@ func InitRouter() *gin.Engine {
 		role.NewHandler().Use(g.Group("system/roles"))
 		//租户
 		tenant.NewHandler().Use(g.Group("tenant/tenants"))
+		//字典
+		dict.NewHandler().Use(g.Group("system/dicts"))
 	}
 
 	return r
