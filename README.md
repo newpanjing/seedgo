@@ -1,6 +1,7 @@
 # SeedGo 后端脚手架
 
-SeedGo 是一个基于 Go 语言的企业级现代后端开发脚手架，采用分层架构设计，集成了用户管理、角色权限控制（RBAC）、多租户支持等核心功能。它旨在帮助开发者快速搭建高性能、可扩展的 Web 应用程序。
+SeedGo 是一个基于 Go 语言的企业级现代后端开发脚手架，采用分层架构设计，集成了用户管理、角色权限控制（RBAC）、多租户支持等核心功能。它旨在帮助开发者快速搭建高性能、可扩展的
+Web 应用程序。
 
 ## 🛠 技术栈
 
@@ -56,6 +57,7 @@ SeedGo 是一个基于 Go 语言的企业级现代后端开发脚手架，采用
 ### 1. 环境准备
 
 确保你的本地环境已安装以下工具：
+
 - [Go](https://go.dev/dl/) (1.25 或更高版本)
 - [Docker](https://www.docker.com/) & Docker Compose
 - [Make](https://www.gnu.org/software/make/) (可选，用于简化构建命令)
@@ -70,6 +72,7 @@ docker-compose up -d
 ```
 
 该命令将启动一个 MySQL 8.0 容器，并在端口 `3306` 监听。
+
 - **数据库名**: `smart`
 - **Root 密码**: `123456`
 - **数据持久化**: 数据保存在 `docker/mysql/data` 目录下。
@@ -86,12 +89,14 @@ database:
 ### 4. 运行项目
 
 #### 使用 Go 直接运行
+
 ```bash
 go mod tidy
 go run main.go
 ```
 
 #### 使用 Makefile 编译运行
+
 ```bash
 # 编译二进制文件
 make build
@@ -147,12 +152,12 @@ docker run -p 3000:3000 seedgo-app
 
 ## 📝 常用命令
 
-| 命令 | 说明 |
-| --- | --- |
-| `make build` | 编译项目生成二进制文件 `main` |
-| `go run main.go` | 本地开发模式运行 |
-| `docker-compose up -d` | 启动数据库服务 |
-| `docker-compose down` | 停止并移除数据库服务 |
+| 命令                     | 说明                 |
+|------------------------|--------------------|
+| `make build`           | 编译项目生成二进制文件 `main` |
+| `go run main.go`       | 本地开发模式运行           |
+| `docker-compose up -d` | 启动数据库服务            |
+| `docker-compose down`  | 停止并移除数据库服务         |
 
 ## 🤝 贡献指南
 
@@ -160,4 +165,6 @@ docker run -p 3000:3000 seedgo-app
 
 ## 📄 许可证
 
-[MIT License](LICENSE)
+[BUSINESS SOURCE LICENSE](LICENSE)
+
+个人和非盈利组织以研究学习试用免费，用于商业用途目的和其余商业组织需购买授权。
