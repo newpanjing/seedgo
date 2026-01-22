@@ -1,9 +1,9 @@
 package perms
 
 import (
+	"seedgo/internal/dto/request"
 	"seedgo/internal/model"
 	"seedgo/internal/shared"
-	"seedgo/pkg/request"
 )
 
 type Service struct {

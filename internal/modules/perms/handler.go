@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"seedgo/internal/dto/request"
+	"seedgo/internal/dto/response"
 	"seedgo/internal/model"
 	"seedgo/internal/shared"
-	"seedgo/pkg/request"
-	"seedgo/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

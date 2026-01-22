@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"seedgo/pkg/request"
-	"seedgo/pkg/response"
+	"seedgo/internal/dto/request"
+	"seedgo/internal/dto/response"
 
 	"github.com/gin-gonic/gin"
 )

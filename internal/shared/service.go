@@ -3,9 +3,9 @@ package shared
 import (
 	"context"
 	"fmt"
+	"seedgo/internal/dto/request"
+	"seedgo/internal/global"
 	"seedgo/internal/model"
-	"seedgo/pkg/global"
-	"seedgo/pkg/request"
 
 	"gorm.io/gorm"
 )

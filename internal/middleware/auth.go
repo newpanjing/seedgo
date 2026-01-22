@@ -3,10 +3,10 @@ package middleware
 import (
 	"context"
 	"net/http"
-	"seedgo/pkg/global"
-	"seedgo/pkg/request"
-	"seedgo/pkg/response"
-	"seedgo/pkg/utils"
+	"seedgo/internal/dto/request"
+	"seedgo/internal/dto/response"
+	global2 "seedgo/internal/global"
+	"seedgo/internal/shared"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -17,7 +17,7 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 检查是否在公开路径中
 		path := c.Request.URL.Path
-		for _, p := range global.Config.Auth.PublicPaths {
+		for _, p := range global2.Config.Auth.PublicPaths {
 			if strings.HasPrefix(path, p) {
 				c.Next()
 				return
@@ -38,7 +38,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 验证 Token
-		claims, err := utils.ParseToken(token)
+		claims, err := shared.ParseToken(token)
 		if err != nil {
 			// global.Logger.Error("Token validation failed", "error", err)
 			response.FailWithCode(c, http.StatusUnauthorized, "Invalid token: "+err.Error())

@@ -13,12 +13,12 @@ jwt:
 auth:
   public_paths:
     - "/api/auth/login"
-    - "/api/system/menus/routes"
-    - '/api/system/menus/buttons'
-    - '/api/system/permissions/tree'
+    - "/api/modules/menus/routes"
+    - '/api/modules/menus/buttons'
+    - '/api/modules/permissions/tree'
     - '/api/tenant/tenants'
-    - '/api/system/roles'
-    - '/api/system/dicts'
+    - '/api/modules/roles'
+    - '/api/modules/dicts'
     - "/api/dosc"
     - "/api/ping"
     - "/favicon.ico"

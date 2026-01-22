@@ -1,10 +1,10 @@
-// 全局多租户插件和delete_at过滤
-package global
+// Package global 全局多租户插件和delete_at过滤
+package db
 
 import (
-	"seedgo/internal/model"
-	"seedgo/pkg/request"
 	"reflect"
+	"seedgo/internal/dto/request"
+	"seedgo/internal/model"
 
 	"gorm.io/gorm"
 )

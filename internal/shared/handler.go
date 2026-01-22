@@ -2,10 +2,10 @@ package shared
 
 import (
 	"log"
+	"seedgo/internal/dto/request"
+	"seedgo/internal/dto/response"
 	"seedgo/internal/model"
-	"seedgo/pkg/request"
-	"seedgo/pkg/response"
-	"seedgo/pkg/utils"
+	"seedgo/pkg"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -75,7 +75,7 @@ func (c *BaseHandler[T]) Update(ctx *gin.Context) {
 		response.Fail(ctx, "Invalid parameters")
 		return
 	}
-	err := utils.SetFieldValue(&entity, "ID", id)
+	err := pkg.SetFieldValue(&entity, "ID", id)
 	if err != nil {
 		response.Fail(ctx, err.Error())
 		return

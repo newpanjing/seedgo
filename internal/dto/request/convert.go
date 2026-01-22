@@ -2,6 +2,7 @@ package request
 
 import (
 	"strconv"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,10 +23,14 @@ func QueryInt(ctx *gin.Context, key string, defaultValue int) int {
 func QueryDefaultPage(ctx *gin.Context) (page int, pageSize int) {
 	page = QueryInt(ctx, "page", 1)
 	pageSize = QueryInt(ctx, "pageSize", 10)
-	
+
 	// 基础限流保护（可选）
-	if page < 1 { page = 1 }
-	if pageSize < 1 { pageSize = 10 }
+	if page < 1 {
+		page = 1
+	}
+	if pageSize < 1 {
+		pageSize = 10
+	}
 
 	return
 }

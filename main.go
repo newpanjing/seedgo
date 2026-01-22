@@ -2,23 +2,24 @@ package main
 
 import (
 	"fmt"
-	"seedgo/internal/app"
-	"seedgo/pkg/global"
 	"log"
+	"seedgo/internal/api"
+	"seedgo/internal/db"
+	global2 "seedgo/internal/global"
 )
 
 func main() {
 	// 1. 初始化配置
-	global.InitConfig("config/local.yaml")
+	global2.InitConfig("config/local.yaml")
 
 	// 2. 初始化数据库
-	global.InitDB()
+	db.InitDB()
 
 	// 3. 初始化路由
-	r := app.InitRouter()
+	r := api.InitRouter()
 
 	// 4. 启动服务
-	port := global.Config.Server.Port
+	port := global2.Config.Server.Port
 	if port == 0 {
 		port = 3000
 	}

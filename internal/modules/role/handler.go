@@ -1,9 +1,9 @@
 package role
 
 import (
+	"seedgo/internal/dto/response"
 	"seedgo/internal/model"
 	"seedgo/internal/shared"
-	"seedgo/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

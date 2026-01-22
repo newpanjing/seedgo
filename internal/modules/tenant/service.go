@@ -5,7 +5,7 @@ import (
 	"errors"
 	"seedgo/internal/model"
 	"seedgo/internal/shared"
-	"seedgo/pkg/utils"
+	"seedgo/pkg"
 
 	"gorm.io/gorm"
 )
@@ -48,7 +48,7 @@ func (s *TenantLogic) Create(ctx context.Context, entity *model.Tenant) error {
 		}
 
 		// 4. 创建管理员用户
-		hash, err := utils.HashPassword(entity.Password)
+		hash, err := pkg.HashPassword(entity.Password)
 		if err != nil {
 			return err
 		}

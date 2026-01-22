@@ -1,6 +1,7 @@
 package request
 
 import (
+	"seedgo/pkg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +14,7 @@ type QueryPage struct {
 	SortDesc *string `json:"sortOrder"`
 }
 
-// 从 gin.Context 中解析 query 参数并填充到 QueryPage
+// BindQuery 从 gin.Context 中解析 query 参数并填充到 QueryPage
 func BindQuery(c *gin.Context) *QueryPage {
 
 	page, pageSize := QueryDefaultPage(c)
@@ -23,7 +24,7 @@ func BindQuery(c *gin.Context) *QueryPage {
 	}
 	if orderBy := c.Query("sortBy"); orderBy != "" {
 		// 驼峰转下划线
-		orderBy = CamelToSnake(orderBy)
+		orderBy = pkg.CamelToSnake(orderBy)
 		query.SortBy = &orderBy
 	} else {
 		id := "id"

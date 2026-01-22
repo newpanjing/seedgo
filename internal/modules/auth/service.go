@@ -5,7 +5,7 @@ import (
 	"errors"
 	"seedgo/internal/model"
 	"seedgo/internal/shared"
-	"seedgo/pkg/utils"
+	"seedgo/pkg"
 	"time"
 )
 
@@ -46,7 +46,7 @@ func (s *Service) Login(ctx context.Context, dto LoginDTO) (*LoginVO, error) {
 		return nil, errors.New("invalid username or password")
 	}
 
-	if !utils.CheckPasswordHash(dto.Password, user.PasswordHash) {
+	if !pkg.CheckPasswordHash(dto.Password, user.PasswordHash) {
 		return nil, errors.New("invalid username or password")
 	}
 
@@ -65,7 +65,7 @@ func (s *Service) Login(ctx context.Context, dto LoginDTO) (*LoginVO, error) {
 		isSuper = *user.IsSuper
 	}
 
-	token, err := utils.GenerateToken(user.ID, user.Username, user.TenantID, isSuper)
+	token, err := shared.GenerateToken(user.ID, user.Username, user.TenantID, isSuper)
 	if err != nil {
 		return nil, errors.New("failed to generate token")
 	}
@@ -108,10 +108,10 @@ func (s *Service) ChangePassword(ctx context.Context, uid model.ID, dto ChangePa
 	if err != nil {
 		return err
 	}
-	if !utils.CheckPasswordHash(dto.OldPassword, user.PasswordHash) {
+	if !pkg.CheckPasswordHash(dto.OldPassword, user.PasswordHash) {
 		return errors.New("invalid old password")
 	}
-	hash, err := utils.HashPassword(dto.NewPassword)
+	hash, err := pkg.HashPassword(dto.NewPassword)
 	if err != nil {
 		return err
 	}

@@ -1,9 +1,9 @@
-package utils
+package shared
 
 import (
 	"errors"
+	"seedgo/internal/global"
 	"seedgo/internal/model"
-	"seedgo/pkg/global"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

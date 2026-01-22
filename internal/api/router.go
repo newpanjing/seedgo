@@ -1,12 +1,12 @@
-package app
+package api
 
 import (
 	"seedgo/internal/middleware"
-	"seedgo/internal/system/auth"
-	"seedgo/internal/system/perms"
-	"seedgo/internal/system/role"
-	"seedgo/internal/system/tenant"
-	"seedgo/internal/system/user"
+	"seedgo/internal/modules/auth"
+	"seedgo/internal/modules/perms"
+	"seedgo/internal/modules/role"
+	"seedgo/internal/modules/tenant"
+	"seedgo/internal/modules/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,11 +28,11 @@ func InitRouter() *gin.Engine {
 		//认证
 		auth.NewHandler().Use(g.Group("/auth"))
 		//权限资源
-		perms.NewHandler().Use(g.Group("system/permissions"))
+		perms.NewHandler().Use(g.Group("modules/permissions"))
 		//用户
-		user.NewHandler().Use(g.Group("system/users"))
+		user.NewHandler().Use(g.Group("modules/users"))
 		//角色
-		role.NewHandler().Use(g.Group("system/roles"))
+		role.NewHandler().Use(g.Group("modules/roles"))
 		//租户
 		tenant.NewHandler().Use(g.Group("tenant/tenants"))
 	}
