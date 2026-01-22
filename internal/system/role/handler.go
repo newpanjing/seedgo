@@ -1,9 +1,9 @@
 package role
 
 import (
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/internal/shared"
-	"github.com/newpanjing/seedgo/pkg/response"
+	"seedgo/internal/model"
+	"seedgo/internal/shared"
+	"seedgo/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

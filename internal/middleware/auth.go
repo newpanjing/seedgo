@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"context"
-	"github.com/newpanjing/seedgo/pkg/global"
-	"github.com/newpanjing/seedgo/pkg/request"
-	"github.com/newpanjing/seedgo/pkg/response"
-	"github.com/newpanjing/seedgo/pkg/utils"
+	"seedgo/pkg/global"
+	"seedgo/pkg/request"
+	"seedgo/pkg/response"
+	"seedgo/pkg/utils"
 	"net/http"
 	"strings"
 

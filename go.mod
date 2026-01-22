@@ -1,4 +1,4 @@
-module github.com/newpanjing/seedgo
+module seedgo
 
 go 1.25.5
 

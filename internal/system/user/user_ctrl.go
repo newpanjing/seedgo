@@ -1,8 +1,8 @@
 package user
 
 import (
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/internal/shared"
+	"seedgo/internal/model"
+	"seedgo/internal/shared"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

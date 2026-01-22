@@ -3,9 +3,9 @@ package tenant
 import (
 	"context"
 	"errors"
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/internal/shared"
-	"github.com/newpanjing/seedgo/pkg/utils"
+	"seedgo/internal/model"
+	"seedgo/internal/shared"
+	"seedgo/pkg/utils"
 
 	"gorm.io/gorm"
 )

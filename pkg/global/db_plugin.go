@@ -2,8 +2,8 @@
 package global
 
 import (
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/pkg/request"
+	"seedgo/internal/model"
+	"seedgo/pkg/request"
 	"reflect"
 
 	"gorm.io/gorm"

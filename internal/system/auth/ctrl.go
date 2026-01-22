@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"github.com/newpanjing/seedgo/pkg/request"
-	"github.com/newpanjing/seedgo/pkg/response"
+	"seedgo/pkg/request"
+	"seedgo/pkg/response"
 
 	"github.com/gin-gonic/gin"
 )

@@ -2,8 +2,8 @@ package utils
 
 import (
 	"errors"
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/pkg/global"
+	"seedgo/internal/model"
+	"seedgo/pkg/global"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

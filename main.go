@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/newpanjing/seedgo/internal/app"
-	"github.com/newpanjing/seedgo/pkg/global"
+	"seedgo/internal/app"
+	"seedgo/pkg/global"
 	"log"
 )
 

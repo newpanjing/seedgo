@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/newpanjing/seedgo/internal/model"
+	"seedgo/internal/model"
 )
 
 func main() {

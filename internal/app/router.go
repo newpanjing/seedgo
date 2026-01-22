@@ -1,13 +1,13 @@
 package app
 
 import (
-	"github.com/newpanjing/seedgo/internal/middleware"
-	"github.com/newpanjing/seedgo/internal/system/auth"
-	"github.com/newpanjing/seedgo/internal/system/perms"
-	"github.com/newpanjing/seedgo/internal/system/role"
-	"github.com/newpanjing/seedgo/internal/system/tenant"
-	"github.com/newpanjing/seedgo/internal/system/user"
-	"github.com/newpanjing/seedgo/pkg/response"
+	"seedgo/internal/middleware"
+	"seedgo/internal/system/auth"
+	"seedgo/internal/system/perms"
+	"seedgo/internal/system/role"
+	"seedgo/internal/system/tenant"
+	"seedgo/internal/system/user"
+	"seedgo/pkg/response"
 	"time"
 
 	"github.com/gin-gonic/gin"

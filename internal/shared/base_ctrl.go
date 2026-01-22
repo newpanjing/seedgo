@@ -1,10 +1,10 @@
 package shared
 
 import (
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/pkg/request"
-	"github.com/newpanjing/seedgo/pkg/response"
-	"github.com/newpanjing/seedgo/pkg/utils"
+	"seedgo/internal/model"
+	"seedgo/pkg/request"
+	"seedgo/pkg/response"
+	"seedgo/pkg/utils"
 	"log"
 
 	"github.com/gin-gonic/gin"

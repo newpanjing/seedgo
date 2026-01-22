@@ -3,9 +3,9 @@ package shared
 import (
 	"context"
 	"fmt"
-	"github.com/newpanjing/seedgo/pkg/global"
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/pkg/request"
+	"seedgo/pkg/global"
+	"seedgo/internal/model"
+	"seedgo/pkg/request"
 
 	"gorm.io/gorm"
 )

@@ -1,9 +1,9 @@
 package perms
 
 import (
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/internal/shared"
-	"github.com/newpanjing/seedgo/pkg/request"
+	"seedgo/internal/model"
+	"seedgo/internal/shared"
+	"seedgo/pkg/request"
 )
 
 type Service struct {

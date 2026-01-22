@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/pkg/global"
+	"seedgo/internal/model"
+	"seedgo/pkg/global"
 	"log"
 )
 

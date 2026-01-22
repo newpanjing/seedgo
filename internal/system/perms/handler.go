@@ -2,10 +2,10 @@ package perms
 
 import (
 	"fmt"
-	"github.com/newpanjing/seedgo/internal/model"
-	"github.com/newpanjing/seedgo/internal/shared"
-	"github.com/newpanjing/seedgo/pkg/request"
-	"github.com/newpanjing/seedgo/pkg/response"
+	"seedgo/internal/model"
+	"seedgo/internal/shared"
+	"seedgo/pkg/request"
+	"seedgo/pkg/response"
 	"log"
 	"net/http"
 
