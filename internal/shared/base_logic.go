@@ -3,7 +3,7 @@ package shared
 import (
 	"context"
 	"fmt"
-	"github.com/newpanjing/seedgo/internal/global"
+	"github.com/newpanjing/seedgo/pkg/global"
 	"github.com/newpanjing/seedgo/internal/model"
 	"github.com/newpanjing/seedgo/pkg/request"
 
