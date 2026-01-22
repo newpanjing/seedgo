@@ -28,11 +28,11 @@ func InitRouter() *gin.Engine {
 		//认证
 		auth.NewHandler().Use(g.Group("/auth"))
 		//权限资源
-		perms.NewHandler().Use(g.Group("modules/permissions"))
+		perms.NewHandler().Use(g.Group("system/permissions"))
 		//用户
-		user.NewHandler().Use(g.Group("modules/users"))
+		user.NewHandler().Use(g.Group("system/users"))
 		//角色
-		role.NewHandler().Use(g.Group("modules/roles"))
+		role.NewHandler().Use(g.Group("system/roles"))
 		//租户
 		tenant.NewHandler().Use(g.Group("tenant/tenants"))
 	}

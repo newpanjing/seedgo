@@ -19,6 +19,18 @@ SeedGo 是一个基于 Go 语言的现代后端开发脚手架，采用分层架
 - **标准化响应**: 统一的 API 响应格式与错误处理。
 - **环境隔离**: 支持本地开发、测试、生产等多环境配置。
 
+## 📸 系统截图
+
+<p align="center">
+  <img src="docs/images/login.png" alt="Login" width="48%" />
+  <img src="docs/images/dashboard.png" alt="Dashboard" width="48%" />
+</p>
+<p align="center">
+  <img src="docs/images/table.png" alt="Table" width="32%" />
+  <img src="docs/images/create.png" alt="Create" width="32%" />
+  <img src="docs/images/perms.png" alt="Perms" width="32%" />
+</p>
+
 ## 📂 目录结构
 
 ```text

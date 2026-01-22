@@ -9,7 +9,7 @@ import (
 
 func InitConfig(configPath string) {
 	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
-	
+
 	v := viper.New()
 	v.SetConfigFile(configPath)
 	v.SetConfigType("yaml")
