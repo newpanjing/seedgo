@@ -1,8 +1,8 @@
 package perms
 
 import (
-	"seedgo/internal/dto/request"
 	"seedgo/internal/model"
+	"seedgo/internal/scope"
 	"seedgo/internal/shared"
 )
 
@@ -19,7 +19,7 @@ func NewService() *Service {
 }
 
 // GetTree 获取权限树
-func (s *Service) GetTree(user *request.UserContext) ([]*model.Permission, error) {
+func (s *Service) GetTree(user *scope.UserContext) ([]*model.Permission, error) {
 
 	var perms []*model.Permission
 	var err error

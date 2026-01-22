@@ -3,9 +3,8 @@ package middleware
 import (
 	"context"
 	"net/http"
-	"seedgo/internal/dto/request"
-	"seedgo/internal/dto/response"
 	global2 "seedgo/internal/global"
+	"seedgo/internal/scope"
 	"seedgo/internal/shared"
 	"strings"
 
@@ -27,7 +26,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		// 获取JWT Token
 		token := c.GetHeader("Authorization")
 		if token == "" {
-			response.FailWithCode(c, http.StatusUnauthorized, "Unauthorized")
+			scope.FailWithCode(c, http.StatusUnauthorized, "Unauthorized")
 			c.Abort()
 			return
 		}
@@ -41,12 +40,12 @@ func AuthMiddleware() gin.HandlerFunc {
 		claims, err := shared.ParseToken(token)
 		if err != nil {
 			// global.Logger.Error("Token validation failed", "error", err)
-			response.FailWithCode(c, http.StatusUnauthorized, "Invalid token: "+err.Error())
+			scope.FailWithCode(c, http.StatusUnauthorized, "Invalid token: "+err.Error())
 			c.Abort()
 			return
 		}
 
-		userCtx := &request.UserContext{
+		userCtx := &scope.UserContext{
 			ID:       claims.UserID,
 			Username: claims.Username,
 			TenantID: claims.TenantID,

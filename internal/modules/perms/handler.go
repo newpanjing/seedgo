@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"seedgo/internal/dto/request"
-	"seedgo/internal/dto/response"
 	"seedgo/internal/model"
+	"seedgo/internal/scope"
 	"seedgo/internal/shared"
 
 	"github.com/gin-gonic/gin"
@@ -42,35 +41,35 @@ func (c *Handler) Update(ctx *gin.Context) {
 	// 绑定JSON请求体到Permission数据传输对象
 	var dto model.Permission
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
-		response.Fail(ctx, fmt.Sprintf("Invalid parameters:%v", err.Error()))
+		scope.Fail(ctx, fmt.Sprintf("Invalid parameters:%v", err.Error()))
 		return
 	}
 	dto.ID = id
 
 	// 调用业务逻辑层更新权限信息
 	if err := c.logic.Update(ctx.Request.Context(), &dto); err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
-	response.Ok(ctx)
+	scope.Ok(ctx)
 }
 
 func (c *Handler) List(ctx *gin.Context) {
 	//获取当前用户，封装一个方法
-	user := request.GetCurrentUser(ctx)
+	user := scope.GetCurrentUser(ctx)
 	if user == nil {
-		response.FailWithCode(ctx, http.StatusUnauthorized, "Unauthorized")
+		scope.FailWithCode(ctx, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
 	tree, err := c.logic.GetTree(user)
 	if err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
-	response.OkWithData(ctx, response.PageResult{
+	scope.OkWithData(ctx, scope.PageResult{
 		Total: 0,
 		Items: tree,
 	})
@@ -79,19 +78,19 @@ func (c *Handler) List(ctx *gin.Context) {
 // GetTree /**
 func (c *Handler) GetTree(ctx *gin.Context) {
 	//获取当前用户，封装一个方法
-	user := request.GetCurrentUser(ctx)
+	user := scope.GetCurrentUser(ctx)
 	if user == nil {
-		response.FailWithCode(ctx, http.StatusUnauthorized, "Unauthorized")
+		scope.FailWithCode(ctx, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
 	tree, err := c.logic.GetTree(user)
 	if err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
-	response.OkWithData(ctx, tree)
+	scope.OkWithData(ctx, tree)
 }
 
 func NewHandler() *Handler {

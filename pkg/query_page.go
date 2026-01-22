@@ -1,8 +1,6 @@
-package request
+package pkg
 
 import (
-	"seedgo/pkg"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,7 +22,7 @@ func BindQuery(c *gin.Context) *QueryPage {
 	}
 	if orderBy := c.Query("sortBy"); orderBy != "" {
 		// 驼峰转下划线
-		orderBy = pkg.CamelToSnake(orderBy)
+		orderBy = CamelToSnake(orderBy)
 		query.SortBy = &orderBy
 	} else {
 		id := "id"

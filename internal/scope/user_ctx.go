@@ -1,8 +1,18 @@
-package request
+package scope
 
 import (
+	"seedgo/internal/model"
+
 	"github.com/gin-gonic/gin"
 )
+
+type UserContext struct {
+	ID       model.ID      `json:"id"`
+	Username string        `json:"username"`
+	TenantID model.ID      `json:"tenantId"`
+	IsSuper  bool          `json:"isSuper"`
+	Roles    []*model.Role `json:"roles"`
+}
 
 // GetCurrentUser 从 Context 中获取当前登录用户
 // 由于 AuthMiddleware 已经保证了用户的存在和合法性，这里不再返回 error

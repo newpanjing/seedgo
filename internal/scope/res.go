@@ -1,4 +1,4 @@
-package response
+package scope
 
 import (
 	"net/http"

@@ -2,9 +2,8 @@ package shared
 
 import (
 	"log"
-	"seedgo/internal/dto/request"
-	"seedgo/internal/dto/response"
 	"seedgo/internal/model"
+	"seedgo/internal/scope"
 	"seedgo/pkg"
 
 	"github.com/gin-gonic/gin"
@@ -56,55 +55,55 @@ func (c *BaseHandler[T]) Create(ctx *gin.Context) {
 
 	var entity T
 	if err := ctx.ShouldBindJSON(&entity); err != nil {
-		response.Fail(ctx, "Invalid parameters")
+		scope.Fail(ctx, "Invalid parameters")
 		return
 	}
 
 	if err := c.Logic.Create(ctx.Request.Context(), &entity); err != nil {
 		log.Printf("errors:%s", err.Error())
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
-	response.Ok(ctx)
+	scope.Ok(ctx)
 }
 
 func (c *BaseHandler[T]) Update(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
 	var entity T
 	if err := ctx.ShouldBindJSON(&entity); err != nil {
-		response.Fail(ctx, "Invalid parameters")
+		scope.Fail(ctx, "Invalid parameters")
 		return
 	}
 	err := pkg.SetFieldValue(&entity, "ID", id)
 	if err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
 	if err := c.Logic.Update(ctx.Request.Context(), &entity); err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
-	response.Ok(ctx)
+	scope.Ok(ctx)
 }
 
 func (c *BaseHandler[T]) Delete(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
 	if err := c.Logic.Delete(ctx.Request.Context(), id); err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
-	response.Ok(ctx)
+	scope.Ok(ctx)
 }
 
 func (c *BaseHandler[T]) Get(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
 	entity, err := c.Logic.Get(ctx.Request.Context(), id)
 	if err != nil {
-		response.Fail(ctx, "Not found")
+		scope.Fail(ctx, "Not found")
 		return
 	}
-	response.OkWithData(ctx, entity)
+	scope.OkWithData(ctx, entity)
 }
 func (c *BaseHandler[T]) BeforeList(ctx *gin.Context) []func(*gorm.DB) *gorm.DB {
 	return []func(*gorm.DB) *gorm.DB{}
@@ -112,12 +111,12 @@ func (c *BaseHandler[T]) BeforeList(ctx *gin.Context) []func(*gorm.DB) *gorm.DB 
 func (c *BaseHandler[T]) List(ctx *gin.Context) {
 
 	scopes := c.Impl.BeforeList(ctx)
-	queryPage := request.BindQuery(ctx)
+	queryPage := pkg.BindQuery(ctx)
 	if items, total, err := c.Logic.Page(ctx.Request.Context(), *queryPage, scopes...); err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	} else {
-		response.OkWithData(ctx, response.PageResult{
+		scope.OkWithData(ctx, scope.PageResult{
 			Items: items,
 			Total: total,
 		})
@@ -131,10 +130,10 @@ func (c *BaseHandler[T]) BatchDelete(ctx *gin.Context) {
 	}
 	post := &Post{}
 	if err := ctx.ShouldBindJSON(&post); err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
 	//组装id 用id in 删除
-	response.Ok(ctx)
+	scope.Ok(ctx)
 }

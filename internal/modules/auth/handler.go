@@ -1,8 +1,7 @@
 package auth
 
 import (
-	"seedgo/internal/dto/request"
-	"seedgo/internal/dto/response"
+	"seedgo/internal/scope"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,78 +16,78 @@ func NewHandler() *Handler {
 	}
 }
 
-func (a *Handler) Use(g *gin.RouterGroup) {
-	g.POST("/login", a.Login)
-	g.GET("/me", a.GetMe)
-	g.POST("/profile", a.UpdateProfile)
-	g.POST("/logout", a.Logout)
-	g.POST("/change-password", a.ChangePassword)
+func (h *Handler) Use(g *gin.RouterGroup) {
+	g.POST("/login", h.Login)
+	g.GET("/me", h.GetMe)
+	g.POST("/profile", h.UpdateProfile)
+	g.POST("/logout", h.Logout)
+	g.POST("/change-password", h.ChangePassword)
 }
 
-func (a *Handler) GetMe(ctx *gin.Context) {
-	user := request.GetCurrentUser(ctx)
+func (h *Handler) GetMe(ctx *gin.Context) {
+	user := scope.GetCurrentUser(ctx)
 	//通过用户ID查询详情，包含角色，排除密码
-	userModel, err := a.authLogic.GetProfile(user.ID)
+	userModel, err := h.authLogic.GetProfile(user.ID)
 	if err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
-	response.OkWithData(ctx, userModel)
+	scope.OkWithData(ctx, userModel)
 }
 
-func (c *Handler) Login(ctx *gin.Context) {
+func (h *Handler) Login(ctx *gin.Context) {
 	var dto LoginDTO
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
-		response.Fail(ctx, "Invalid parameters")
+		scope.Fail(ctx, "Invalid parameters")
 		return
 	}
 
-	vo, err := c.authLogic.Login(ctx.Request.Context(), dto)
+	vo, err := h.authLogic.Login(ctx.Request.Context(), dto)
 	if err != nil {
-		response.Fail(ctx, err.Error())
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
-	response.OkWithData(ctx, vo)
+	scope.OkWithData(ctx, vo)
 }
 
-func (a *Handler) UpdateProfile(ctx *gin.Context) {
+func (h *Handler) UpdateProfile(ctx *gin.Context) {
 	var dto UpdateProfileDTO
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
-		response.Fail(ctx, "Invalid parameters")
+		scope.Fail(ctx, "Invalid parameters")
 		return
 	}
 
-	user := request.GetCurrentUser(ctx)
-	if err := a.authLogic.UpdateProfile(ctx.Request.Context(), user.ID, dto); err != nil {
-		response.Fail(ctx, err.Error())
+	user := scope.GetCurrentUser(ctx)
+	if err := h.authLogic.UpdateProfile(ctx.Request.Context(), user.ID, dto); err != nil {
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
-	response.Ok(ctx)
+	scope.Ok(ctx)
 }
 
-func (a *Handler) Logout(ctx *gin.Context) {
-	user := request.GetCurrentUser(ctx)
+func (h *Handler) Logout(ctx *gin.Context) {
+	user := scope.GetCurrentUser(ctx)
 	if user != nil {
-		_ = a.authLogic.Logout(user.ID)
+		_ = h.authLogic.Logout(user.ID)
 	}
-	response.Ok(ctx)
+	scope.Ok(ctx)
 }
 
-func (a *Handler) ChangePassword(ctx *gin.Context) {
+func (h *Handler) ChangePassword(ctx *gin.Context) {
 	var dto ChangePasswordDTO
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
-		response.Fail(ctx, "Invalid parameters")
+		scope.Fail(ctx, "Invalid parameters")
 		return
 	}
 
-	user := request.GetCurrentUser(ctx)
-	if err := a.authLogic.ChangePassword(ctx.Request.Context(), user.ID, dto); err != nil {
-		response.Fail(ctx, err.Error())
+	user := scope.GetCurrentUser(ctx)
+	if err := h.authLogic.ChangePassword(ctx.Request.Context(), user.ID, dto); err != nil {
+		scope.Fail(ctx, err.Error())
 		return
 	}
 
-	response.Ok(ctx)
+	scope.Ok(ctx)
 }

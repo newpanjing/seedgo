@@ -3,9 +3,9 @@ package shared
 import (
 	"context"
 	"fmt"
-	"seedgo/internal/dto/request"
 	"seedgo/internal/global"
 	"seedgo/internal/model"
+	"seedgo/pkg"
 
 	"gorm.io/gorm"
 )
@@ -16,7 +16,7 @@ type IBaseService[T any] interface {
 	Delete(ctx context.Context, id model.ID) error
 	Get(ctx context.Context, id model.ID) (*T, error)
 	List(ctx context.Context) ([]T, error)
-	Page(ctx context.Context, query request.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error)
+	Page(ctx context.Context, query pkg.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error)
 }
 
 // BaseService 约束 T 必须实现 model.Entity 接口
@@ -55,7 +55,7 @@ func (s *BaseService[T]) List(ctx context.Context) ([]T, error) {
 	return entities, err
 }
 
-func (s *BaseService[T]) Page(ctx context.Context, query request.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error) {
+func (s *BaseService[T]) Page(ctx context.Context, query pkg.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error) {
 	var entities []T
 	var total int64
 

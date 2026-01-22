@@ -1,8 +1,8 @@
 package role
 
 import (
-	"seedgo/internal/dto/response"
 	"seedgo/internal/model"
+	"seedgo/internal/scope"
 	"seedgo/internal/shared"
 
 	"github.com/gin-gonic/gin"
@@ -33,8 +33,8 @@ func (c *Handler) Get(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
 	entity, err := c.Logic.Get(ctx.Request.Context(), id)
 	if err != nil {
-		response.Fail(ctx, "Not found")
+		scope.Fail(ctx, "Not found")
 		return
 	}
-	response.OkWithData(ctx, entity)
+	scope.OkWithData(ctx, entity)
 }

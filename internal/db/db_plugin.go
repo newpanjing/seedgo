@@ -3,8 +3,8 @@ package db
 
 import (
 	"reflect"
-	"seedgo/internal/dto/request"
 	"seedgo/internal/model"
+	"seedgo/internal/scope"
 
 	"gorm.io/gorm"
 )
@@ -35,7 +35,7 @@ func (p *TenantPlugin) create(db *gorm.DB) {
 		if field := db.Statement.Schema.LookUpField("TenantID"); field != nil {
 			// 从 Context 获取租户 ID
 			if value != nil {
-				user := value.(*request.UserContext)
+				user := value.(*scope.UserContext)
 				//超级用户可以看所有数据
 				if !user.IsSuper {
 					//给实体设置
@@ -95,7 +95,7 @@ func (p *TenantPlugin) filter(db *gorm.DB) {
 		if field := db.Statement.Schema.LookUpField("TenantID"); field != nil {
 			// 从 Context 获取租户 ID
 			if value != nil {
-				user := value.(*request.UserContext)
+				user := value.(*scope.UserContext)
 				//超级用户可以看所有数据
 				if !user.IsSuper {
 					// 只有当查询条件中没有 tenant_id 时才添加
