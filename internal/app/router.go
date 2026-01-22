@@ -18,7 +18,7 @@ func InitRouter() *gin.Engine {
 	r.SetTrustedProxies(nil)
 	r.Use(middleware.Cors())
 
-	g := r.Group("/app")
+	g := r.Group("/api")
 	g.GET("/ping", func(c *gin.Context) {
 		response.OkWithData(c, gin.H{
 			"message": "pong",
