@@ -1,5 +1,5 @@
 // Package global 全局多租户插件和delete_at过滤
-package db
+package form
 
 import (
 	"log"

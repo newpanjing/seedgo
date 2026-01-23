@@ -38,7 +38,7 @@ func PermissionsMiddleware() gin.HandlerFunc {
 		user := scope.GetCurrentUser(c)
 		if user == nil {
 			// 用户未登录或上下文丢失，返回 401
-			scope.FailWithCode(c, http.StatusUnauthorized, "Unauthorized")
+			scope.FailWithCode(c, http.StatusUnauthorized, "请重新登录")
 			c.Abort()
 			return
 		}
@@ -56,8 +56,9 @@ func PermissionsMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+		// 匹配权限树中的路径
 		if !hasPermission(tree, c.Request.Method, currentPath) {
-			scope.FailWithCode(c, http.StatusForbidden, "Forbidden")
+			scope.FailWithCode(c, http.StatusForbidden, "没有权限访问")
 			c.Abort()
 			return
 		}
@@ -67,8 +68,63 @@ func PermissionsMiddleware() gin.HandlerFunc {
 
 // hasPermission 检查用户是否拥有访问权限
 func hasPermission(perms []*model.Permission, method, path string) bool {
+	if len(perms) == 0 {
+		return false
+	}
 
-	//TODO: 用权限树匹配用户的角色权限，菜单、权限树获取，都从一个地方获取，重新登录后，刷新缓存
+	// 遍历权限树，检查是否有匹配的路径
+	for _, p := range perms {
+		matched := false
+		// 1.如果path 包含p.Path 或者 p.Path 包含 urls的时候，就匹配到了
+		if p.Path != "" && strings.Contains(path, p.Path) {
+			matched = true
+		} else if p.PermissionUrls != "" {
+			urls := strings.Split(p.PermissionUrls, ",")
+			for _, u := range urls {
+				if strings.Contains(path, strings.TrimSpace(u)) {
+					matched = true
+					break
+				}
+			}
+		}
+
+		if matched {
+			// 2. 如果请求的是GET 方法，就直接返回true
+			if method == "GET" {
+				return true
+			}
+
+			// 如果是其他类型的方法POST、PUT、DELETE，在判断子项的code是否有:create,:update,:delete
+			var suffix string
+			switch method {
+			case "POST":
+				// 3. 例外处理：请求路径：/system/roles/batch-delete，默认为删除权限
+				if strings.HasSuffix(path, "/batch-delete") {
+					suffix = ":delete"
+				} else {
+					suffix = ":create"
+				}
+			case "PUT":
+				suffix = ":update"
+			case "DELETE":
+				suffix = ":delete"
+			}
+
+			if suffix != "" {
+				for _, child := range p.Children {
+					if strings.HasSuffix(child.PermissionCode, suffix) {
+						return true
+					}
+				}
+			}
+		}
+
+		if len(p.Children) > 0 {
+			if hasPermission(p.Children, method, path) {
+				return true
+			}
+		}
+	}
 
 	return false
 }

@@ -22,6 +22,6 @@ permission:
     - "/api/user/profile"
     - "/api/auth/me"
     - '/api/system/permissions/tree'
-    - '/api/tenant/tenants'
-    - '/api/system/dicts'
+    - '/api/public/tenant/tenants'
+    - '/api/public/system/dicts'
     - "/api/dosc"

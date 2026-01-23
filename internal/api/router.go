@@ -22,14 +22,12 @@ func InitRouter() *gin.Engine {
 
 	g := r.Group("/api")
 
-	//需要权限的
-	g.Use(middleware.AuthMiddleware())
-	// 权限校验
-	g.Use(middleware.PermissionsMiddleware())
-	{
+	//认证
+	auth.NewHandler().Use(g.Group("/auth"))
 
-		//认证
-		auth.NewHandler().Use(g.Group("/auth"))
+	// 权限校验
+	g.Use(middleware.AuthMiddleware(), middleware.PermissionsMiddleware())
+	{
 		//权限资源
 		perms.NewHandler().Use(g.Group("system/permissions"))
 		//用户

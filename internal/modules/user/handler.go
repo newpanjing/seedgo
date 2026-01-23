@@ -18,7 +18,7 @@ func NewHandler() *Handler {
 	ctrl := &Handler{
 		logic: logic,
 	}
-	ctrl.BaseHandler = *shared.NewBaseHandler(logic, nil, ctrl)
+	ctrl.BaseHandler = *shared.NewBaseHandler[model.User](logic, nil, ctrl)
 	return ctrl
 }
 
