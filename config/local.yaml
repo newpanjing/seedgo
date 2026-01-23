@@ -13,12 +13,16 @@ jwt:
 auth:
   public_paths:
     - "/api/auth/login"
-    - "/api/modules/menus/routes"
-    - '/api/modules/menus/buttons'
-    - '/api/modules/permissions/tree'
-    - '/api/tenant/tenants'
-    - '/api/modules/roles'
-    - '/api/modules/dicts'
-    - "/api/dosc"
     - "/api/ping"
     - "/favicon.ico"
+
+permission:
+  exclude_paths:
+    - "/api/auth/logout"
+    - "/api/user/profile"
+    - "/api/auth/me"
+    - '/api/system/permissions/tree'
+    - '/api/tenant/tenants'
+    - '/api/system/roles'
+    - '/api/system/dicts'
+    - "/api/dosc"

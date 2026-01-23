@@ -18,9 +18,14 @@ type AuthConfig struct {
 	PublicPaths []string `mapstructure:"public_paths"`
 }
 
+type PermissionConfig struct {
+	ExcludePaths []string `mapstructure:"exclude_paths"`
+}
+
 type Configuration struct {
-	Server   ServerConfig   `mapstructure:"server"`
-	Database DatabaseConfig `mapstructure:"database"`
-	JWT      JWTConfig      `mapstructure:"jwt"`
-	Auth     AuthConfig     `mapstructure:"auth"`
+	Server     ServerConfig     `mapstructure:"server"`
+	Database   DatabaseConfig   `mapstructure:"database"`
+	JWT        JWTConfig        `mapstructure:"jwt"`
+	Auth       AuthConfig       `mapstructure:"auth"`
+	Permission PermissionConfig `mapstructure:"permission"`
 }

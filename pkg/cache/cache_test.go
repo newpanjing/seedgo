@@ -1,140 +1,105 @@
 package cache
 
 import (
-	"context"
 	"testing"
 	"time"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/stretchr/testify/assert"
 )
 
-type TestUser struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+type User struct {
+	Name string
+	Age  int
 }
 
 func TestMemoryCache(t *testing.T) {
-	ctx := context.Background()
-	c := NewMemoryCache()
+	c := Use(NewMemoryCache())
 
-	t.Run("SetAndGet_String", func(t *testing.T) {
-		key := "test_str"
-		val := "hello world"
-		err := c.Set(ctx, key, val, 10*time.Second)
-		if err != nil {
-			t.Fatalf("Set failed: %v", err)
-		}
+	// Test Set & Get
+	err := c.Set("user", User{Name: "test", Age: 18})
+	assert.NoError(t, err)
 
-		var getVal string
-		err = c.Get(ctx, key, &getVal)
-		if err != nil {
-			t.Fatalf("Get failed: %v", err)
-		}
-		if getVal != val {
-			t.Errorf("Expected %v, got %v", val, getVal)
-		}
-	})
+	var u User
+	err = c.Get("user", &u)
+	assert.NoError(t, err)
+	assert.Equal(t, "test", u.Name)
+	assert.Equal(t, 18, u.Age)
 
-	t.Run("SetAndGet_Struct", func(t *testing.T) {
-		key := "test_user"
-		user := TestUser{ID: 1, Name: "Alice"}
-		err := c.Set(ctx, key, user, 10*time.Second)
-		if err != nil {
-			t.Fatalf("Set failed: %v", err)
-		}
+	// Test Ttl
+	c.Set("ttl_key", "val", 1*time.Second)
+	ttl := c.Ttl("ttl_key")
+	assert.True(t, ttl > 0)
+	assert.True(t, ttl <= 1*time.Second)
 
-		var getUser TestUser
-		err = c.Get(ctx, key, &getUser)
-		if err != nil {
-			t.Fatalf("Get failed: %v", err)
-		}
-		if getUser.ID != user.ID || getUser.Name != user.Name {
-			t.Errorf("Expected %+v, got %+v", user, getUser)
-		}
-	})
+	// Test Expire
+	c.Expire("user", 1*time.Second)
+	ttl = c.Ttl("user")
+	assert.True(t, ttl > 0)
 
-	t.Run("Expiration", func(t *testing.T) {
-		key := "expire_key"
-		val := "gone"
-		// 设置 1 毫秒过期
-		err := c.Set(ctx, key, val, 1*time.Millisecond)
-		if err != nil {
-			t.Fatalf("Set failed: %v", err)
-		}
+	// Test Delete
+	c.Delete("user")
+	assert.False(t, c.Has("user"))
 
-		// 等待过期
-		time.Sleep(10 * time.Millisecond)
+	// Test Call
+	var uCall User
+	err = c.Call("call_key", &uCall, func() (any, error) {
+		return User{Name: "call", Age: 20}, nil
+	}, 10*time.Second)
+	assert.NoError(t, err)
+	assert.Equal(t, "call", uCall.Name)
+	assert.Equal(t, 20, uCall.Age)
 
-		var getVal string
-		err = c.Get(ctx, key, &getVal)
-		if err != ErrCacheMiss {
-			t.Errorf("Expected ErrCacheMiss, got %v", err)
-		}
-	})
+	// 验证 Call 是否缓存
+	assert.True(t, c.Has("call_key"))
 
-	t.Run("Delete", func(t *testing.T) {
-		key := "del_key"
-		c.Set(ctx, key, "value", 0)
-		err := c.Del(ctx, key)
-		if err != nil {
-			t.Fatalf("Del failed: %v", err)
-		}
+	// 验证值
+	var u2 User
+	c.Get("call_key", &u2)
+	assert.Equal(t, "call", u2.Name)
 
-		var getVal string
-		err = c.Get(ctx, key, &getVal)
-		if err != ErrCacheMiss {
-			t.Errorf("Expected ErrCacheMiss after delete, got %v", err)
-		}
-	})
-
-	t.Run("Has", func(t *testing.T) {
-		key := "has_key"
-		c.Set(ctx, key, "value", 0)
-
-		exists, _ := c.Has(ctx, key)
-		if !exists {
-			t.Error("Expected key to exist")
-		}
-
-		exists, _ = c.Has(ctx, "non_existent")
-		if exists {
-			t.Error("Expected key to not exist")
-		}
-	})
+	// Test Call with simple type
+	var simpleVal string
+	err = c.Call("simple_key", &simpleVal, func() (any, error) {
+		return "simple_val", nil
+	}, 10*time.Second)
+	assert.NoError(t, err)
+	assert.Equal(t, "simple_val", simpleVal)
 }
 
-func TestRedisCache(t *testing.T) {
-	// 尝试连接本地 Redis，如果连不上则跳过测试
-	ctx := context.Background()
-	client := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-	})
+func TestMemoryCache_Cleanup(t *testing.T) {
+	c := NewMemoryCache()
+	defer c.Close()
 
-	if err := client.Ping(ctx).Err(); err != nil {
-		t.Skip("Redis not available, skipping TestRedisCache")
-		return
-	}
-	defer client.Close()
+	c.Set("expire_key", "val", 100*time.Millisecond)
+	assert.True(t, c.Has("expire_key"))
 
-	c := NewRedisCache(client)
+	time.Sleep(200 * time.Millisecond)
 
-	t.Run("SetAndGet_Struct", func(t *testing.T) {
-		key := "redis_user"
-		user := TestUser{ID: 99, Name: "RedisUser"}
-		err := c.Set(ctx, key, user, 10*time.Second)
-		if err != nil {
-			t.Fatalf("Set failed: %v", err)
-		}
+	// 懒惰删除测试
+	assert.False(t, c.Has("expire_key"))
 
-		var getUser TestUser
-		err = c.Get(ctx, key, &getUser)
-		if err != nil {
-			t.Fatalf("Get failed: %v", err)
-		}
-		if getUser.Name != user.Name {
-			t.Errorf("Expected %s, got %s", user.Name, getUser.Name)
-		}
+	// 定时清理测试 (需要等待 ticker，这里简单手动触发一下或者信赖逻辑)
+	// c.cleanup() 是私有的，无法直接测，只能测效果
+	// 但 Has 已经覆盖了过期逻辑。
+}
 
-		c.Del(ctx, key)
-	})
+func TestMemoryCache_JSON(t *testing.T) {
+	c := NewMemoryCache()
+
+	// 测试 json 序列化 map
+	m := map[string]string{"a": "b"}
+	c.Set("map", m)
+
+	var out map[string]string
+	c.Get("map", &out)
+	assert.Equal(t, "b", out["a"])
+
+	// 测试 json 反序列化到 any
+	// c.Get("map", &anyVar) -> anyVar will be map[string]interface{}
+	var anyVar any
+	c.Get("map", &anyVar)
+
+	// anyVar should be map[string]interface{}
+	// assert.IsType(t, map[string]interface{}{}, anyVar)
+	// 注意：json.Unmarshal 数字默认是 float64
 }

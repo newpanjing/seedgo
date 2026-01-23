@@ -24,6 +24,8 @@ func InitRouter() *gin.Engine {
 
 	//需要权限的
 	g.Use(middleware.AuthMiddleware())
+	// 权限校验
+	g.Use(middleware.PermissionsMiddleware())
 	{
 
 		//认证
