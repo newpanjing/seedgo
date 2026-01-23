@@ -4,6 +4,7 @@ import { TableColumn } from '@/types/column';
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-vue-next';
 import type { HTMLAttributes } from 'vue';
 import { computed, defineComponent, h, type PropType, ref, watch } from 'vue';
+import TableCellFormat from './TableCellFormat.vue';
 
 const CellRenderer = defineComponent({
     name: 'CellRenderer',
@@ -24,6 +25,12 @@ const CellRenderer = defineComponent({
     setup(props) {
         return () => {
             const { row, column, value } = props;
+            
+            // Check for date fields
+            if (['createdAt', 'updatedAt', 'deletedAt'].includes(column.field)) {
+                return h(TableCellFormat, { value: value as any });
+            }
+
             if (column.formatter) {
                 const result = column.formatter(value, row);
                 // Simple check for HTML string to support "pure html"
@@ -229,7 +236,7 @@ const alignFlex = (column: TableColumn) => column.align === 'center' ? 'justify-
                                 <ChevronRight v-else class="w-4 h-4" />
                             </button>
                             <span v-else class="w-5 mr-1 inline-block"></span> <!-- Placeholder for alignment -->
-
+                            
                             <template v-if="column.formatter">
                                 <CellRenderer :value="item[column.field]" :row="item" :column="column" />
                             </template>

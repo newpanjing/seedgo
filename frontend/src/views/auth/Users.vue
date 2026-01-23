@@ -292,8 +292,6 @@ const dateRange=ref<any>([])
           <TenantSelect v-model="selectedTenantId" placeholder="按租户筛选" @change="refreshTable" />
         </div>
         <CommonSelect v-model="selectRoleId" url="/common/options/roles" placeholder="搜索角色"></CommonSelect>
-        <!-- <DateSelect v-model="date"></DateSelect> -->
-        <DateRangeSelect v-model="dateRange"></DateRangeSelect>
       </template>
       <template #actions="{ Row, View, Update, Delete }">
         <div class="flex items-center justify-end gap-1">

@@ -37,16 +37,16 @@ func Result(code int, data interface{}, msg string, c *gin.Context) {
 
 // Ok 成功返回
 func Ok(c *gin.Context) {
-	Result(SuccessCode, map[string]interface{}{}, "操作成功", c)
+	Result(SuccessCode, map[string]interface{}{}, "OK", c)
 }
 
 // OkWithData 成功返回带数据
 func OkWithData(c *gin.Context, data interface{}) {
-	Result(SuccessCode, data, "查询成功", c)
+	Result(SuccessCode, data, "OK", c)
 }
 
 func Error(c *gin.Context) {
-	Result(ErrorCode, nil, "操作失败", c)
+	Result(ErrorCode, nil, "ERROR", c)
 }
 
 func Fail(c *gin.Context, msg string) {
