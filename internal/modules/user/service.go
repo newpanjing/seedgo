@@ -56,7 +56,10 @@ func (s *Service) Login(ctx context.Context, dto form.LoginDTO) (*form.LoginVO, 
 	now := time.Now()
 	user.LastLoginAt = &now
 	// user.LastLoginIP = ... // context is needed to get IP, or passed in DTO
-	s.Update(ctx, user)
+	err = s.Update(ctx, user)
+	if err != nil {
+		return nil, err
+	}
 
 	isSuper := false
 	if user.IsSuper != nil {

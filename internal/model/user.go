@@ -27,7 +27,7 @@ type User struct {
 	Tenant *Tenant `gorm:"foreignKey:TenantID" json:"tenant"`
 }
 
-func (User) TableName() string {
+func (u *User) TableName() string {
 	return "user"
 }
 

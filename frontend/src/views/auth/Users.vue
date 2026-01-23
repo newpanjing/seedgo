@@ -290,8 +290,7 @@ const selectRoleId = ref<string | number | undefined>(undefined)
         <div v-if="isSuper">
           <TenantSelect v-model="selectedTenantId" placeholder="按租户筛选" @change="refreshTable" />
         </div>
-        <CommonSelect v-model="selectRoleId" url="/common/options/roles"></CommonSelect>
-        <!-- <RoleSelect v-model="selectRoleId" placeholder="按角色筛选" @change="refreshTable" /> -->
+        <CommonSelect v-model="selectRoleId" url="/common/options/roles" placeholder="搜索角色"></CommonSelect>
       </template>
       <template #actions="{ Row, View, Update, Delete }">
         <div class="flex items-center justify-end gap-1">
