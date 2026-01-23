@@ -2,10 +2,14 @@
 package db
 
 import (
+	"log"
 	"reflect"
+	"seedgo/internal/global"
 	"seedgo/internal/model"
 	"seedgo/internal/scope"
+	"time"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -19,8 +23,29 @@ func (p *TenantPlugin) Initialize(db *gorm.DB) error {
 	db.Callback().Delete().Before("gorm:delete").Register("tenant:filter", p.filter)
 
 	db.Callback().Update().Before("gorm:update").Register("tenant:filter", p.filter)
-	db.Callback().Create().Before("gorm:create").Register("tenant:filter", p.create)
+	db.Callback().Create().Before("gorm:create").Register("tenant:create", p.create)
+
+	// 清除缓存
+	db.Callback().Delete().After("gorm:delete").Register("cache:clear", p.clearCache)
+	db.Callback().Create().After("gorm:create").Register("cache:clear", p.clearCache)
+	db.Callback().Update().After("gorm:update").Register("cache:clear", p.clearCache)
+
 	return nil
+}
+func (p *TenantPlugin) clearCache(db *gorm.DB) {
+	//判断表如果是role、permission则删除缓存
+	if db.Statement.Table == new(model.Role).TableName() || db.Statement.Table == new(model.Permission).TableName() {
+		var beginTime = time.Now()
+		err := global.Cache.DeletePrefix("auth:permissions")
+		if err != nil {
+			log.Println("清除所有权限缓存失败", err)
+			return
+		}
+		if gin.Mode() == gin.DebugMode {
+			// 提示用户清除缓存成功
+			log.Println("清除所有权限缓存成功,耗时:", time.Since(beginTime))
+		}
+	}
 }
 
 func (p *TenantPlugin) create(db *gorm.DB) {

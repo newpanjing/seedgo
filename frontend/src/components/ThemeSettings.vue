@@ -68,7 +68,7 @@ const handleClose = () => {
 
 <template>
   <Dialog :open="open" @update:open="$emit('update:open', $event)">
-    <DialogContent class="sm:max-w-xl rounded-3xl backdrop-blur-xl border border-border/50 dark:border-white/10 shadow-2xl duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+    <DialogContent class="sm:max-w-xl rounded-3xl bg-background border border-border/50 dark:border-white/10 shadow-2xl duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
       <DialogHeader>
         <DialogTitle>主题设置</DialogTitle>
       </DialogHeader>

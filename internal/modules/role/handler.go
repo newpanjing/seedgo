@@ -20,18 +20,15 @@ func NewHandler() *Handler {
 	return ctr
 }
 
-func (r *Handler) Use(g *gin.RouterGroup) {
-	//注册基本crud
-	r.BaseHandler.Use(g)
-	g.GET("/c", func(ctx *gin.Context) {})
-	g.GET("/d", func(ctx *gin.Context) {})
-	g.GET("/e", func(ctx *gin.Context) {})
+func (h *Handler) Use(g *gin.RouterGroup) {
+	//cruddy
+	h.BaseHandler.Use(g)
 }
 
-// 实现Get方法
-func (c *Handler) Get(ctx *gin.Context) {
+// Get 实现Get方法
+func (h *Handler) Get(ctx *gin.Context) {
 	id := model.ToID(ctx.Param("id"))
-	entity, err := c.Logic.Get(ctx.Request.Context(), id)
+	entity, err := h.Logic.Get(ctx.Request.Context(), id)
 	if err != nil {
 		scope.Fail(ctx, "Not found")
 		return

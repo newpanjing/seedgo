@@ -63,7 +63,7 @@ func (c *Handler) List(ctx *gin.Context) {
 		return
 	}
 
-	tree, err := c.logic.GetTree(user)
+	tree, err := c.logic.GetAllPerms(user)
 	if err != nil {
 		scope.Fail(ctx, err.Error())
 		return
@@ -84,7 +84,7 @@ func (c *Handler) GetTree(ctx *gin.Context) {
 		return
 	}
 
-	tree, err := c.logic.GetTree(user)
+	tree, err := c.logic.GetCacheTree(user)
 	if err != nil {
 		scope.Fail(ctx, err.Error())
 		return
@@ -94,11 +94,11 @@ func (c *Handler) GetTree(ctx *gin.Context) {
 }
 
 func NewHandler() *Handler {
-	logic := NewService()
+	logic := GetService()
 	ctrl := &Handler{
 		logic: logic,
 	}
-	ctrl.BaseHandler = *shared.NewBaseHandler(logic, nil, ctrl)
+	ctrl.BaseHandler = *shared.NewBaseHandler[model.Permission](logic, nil, ctrl)
 
 	return ctrl
 }

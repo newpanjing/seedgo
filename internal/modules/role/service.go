@@ -2,8 +2,8 @@ package role
 
 import (
 	"context"
-	"seedgo/internal/global"
 	"seedgo/internal/model"
+	"seedgo/internal/modules/perms"
 	"seedgo/internal/shared"
 
 	"gorm.io/gorm"
@@ -19,7 +19,7 @@ func NewService() *Service {
 	}
 }
 
-// 创建
+// Create 创建
 func (l *Service) Create(ctx context.Context, entity *model.Role) error {
 	return l.DB.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		// 处理关联权限
@@ -67,22 +67,7 @@ func (l *Service) Update(ctx context.Context, entity *model.Role) error {
 	}
 
 	// 更新成功后，清除所有用户的权限缓存
-	// 使用前缀删除，避免查询所有用户导致内存溢出
-	_ = global.Cache.DeletePrefix("auth:permissions:")
-	return nil
-}
-
-// Delete 删除角色
-func (l *Service) Delete(ctx context.Context, id model.ID) error {
-	// 1. 执行删除
-	if err := l.BaseService.Delete(ctx, id); err != nil {
-		return err
-	}
-
-	// 2. 清除缓存
-	_ = global.Cache.DeletePrefix("auth:permissions:")
-
-	return nil
+	return perms.GetService().ClearPermissionAllCache()
 }
 
 func (l *Service) Get(ctx context.Context, id model.ID) (*model.Role, error) {

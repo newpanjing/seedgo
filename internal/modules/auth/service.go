@@ -3,8 +3,8 @@ package auth
 import (
 	"context"
 	"errors"
-	"seedgo/internal/global"
 	"seedgo/internal/model"
+	"seedgo/internal/modules/perms"
 	"seedgo/internal/shared"
 	"seedgo/pkg"
 	"time"
@@ -121,10 +121,5 @@ func (s *Service) ChangePassword(ctx context.Context, uid model.ID, dto ChangePa
 }
 
 func (s *Service) Logout(uid model.ID) error {
-	// 清除用户权限缓存
-	// key 格式: auth:permissions:{userId}
-	cacheKey := "auth:permissions:" + uid.String()
-	_ = global.Cache.Delete(cacheKey)
-
-	return nil
+	return perms.GetService().ClearPermissionCache(uid)
 }

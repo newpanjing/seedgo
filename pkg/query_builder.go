@@ -136,6 +136,9 @@ func BuildQueryScope(c *gin.Context, model any) func(*gorm.DB) *gorm.DB {
 					}
 					db = db.Where(strings.Join(conditions, " OR "), args...)
 				}
+			} else {
+				//输出警告
+				log.Printf("[QueryBuilder] Warning: model '%T' does not implement Searchable interface, keyword search is disabled.", model)
 			}
 		}
 

@@ -23,6 +23,5 @@ permission:
     - "/api/auth/me"
     - '/api/system/permissions/tree'
     - '/api/tenant/tenants'
-    - '/api/system/roles'
     - '/api/system/dicts'
     - "/api/dosc"
