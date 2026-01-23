@@ -13,6 +13,13 @@ import { Badge } from '@/components/ui/badge';
 import { Eye, EyeOff, Building2, Edit, Trash2, Key } from 'lucide-vue-next';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore()
+const isSuper = computed(() => {
+  const user = authStore.currentUser
+  return user?.isSuper || user?.is_super
+})
 
 const isResetPasswordOpen = ref(false)
 const resetPasswordUser = ref<User | null>(null)
@@ -271,6 +278,7 @@ const saveAndRefresh = async () => {
 }
 const selectRoleId = ref<string | number | undefined>(undefined)
 
+
 </script>
 
 <template>
@@ -279,10 +287,11 @@ const selectRoleId = ref<string | number | undefined>(undefined)
       :checkable="true" @delete="handleDelete" @batch-delete="handleBatchDelete" @update="handleUpdate"
       @view="handleView" @create="handleCreate">
       <template #filters>
-        <div v-super>
+        <div v-if="isSuper">
           <TenantSelect v-model="selectedTenantId" placeholder="按租户筛选" @change="refreshTable" />
         </div>
-        <RoleSelect v-model="selectRoleId" placeholder="按角色筛选" @change="refreshTable" />
+        <CommonSelect v-model="selectRoleId" url="/common/options/roles"></CommonSelect>
+        <!-- <RoleSelect v-model="selectRoleId" placeholder="按角色筛选" @change="refreshTable" /> -->
       </template>
       <template #actions="{ Row, View, Update, Delete }">
         <div class="flex items-center justify-end gap-1">

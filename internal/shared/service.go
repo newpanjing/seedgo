@@ -17,6 +17,9 @@ type IBaseService[T any] interface {
 	Get(ctx context.Context, id model.ID) (*T, error)
 	List(ctx context.Context) ([]T, error)
 	Page(ctx context.Context, query pkg.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error)
+
+	// Options 获取下拉框选项，默认返回ID和String()
+	Options(ctx context.Context, query pkg.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error)
 }
 
 // BaseService 约束 T 必须实现 model.Entity 接口
@@ -69,4 +72,10 @@ func (s *BaseService[T]) Page(ctx context.Context, query pkg.QueryPage, scopes .
 	err := s.DB.WithContext(ctx).Model(&entity).Scopes(scopes...).Order(order).Offset(offset).Limit(*query.PageSize).Session(&gorm.Session{}).Find(&entities).Error
 
 	return entities, total, err
+}
+
+// Options 获取下拉框选项，默认返回ID和String()
+func (s *BaseService[T]) Options(ctx context.Context, query pkg.QueryPage, scopes ...func(*gorm.DB) *gorm.DB) ([]T, int64, error) {
+	//默认调用分页的接口，保持一致，增加Options只是为了方便扩展和重写
+	return s.Page(ctx, query, scopes...)
 }

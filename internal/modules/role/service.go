@@ -5,6 +5,7 @@ import (
 	"seedgo/internal/model"
 	"seedgo/internal/modules/perms"
 	"seedgo/internal/shared"
+	"sync"
 
 	"gorm.io/gorm"
 )
@@ -17,6 +18,19 @@ func NewService() *Service {
 	return &Service{
 		BaseService: *shared.NewBaseService[model.Role](),
 	}
+}
+
+// 单例模式
+var (
+	instances *Service
+	once      sync.Once
+)
+
+func Instance() *Service {
+	once.Do(func() {
+		instances = NewService()
+	})
+	return instances
 }
 
 // Create 创建

@@ -3,6 +3,7 @@ package api
 import (
 	"seedgo/internal/middleware"
 	"seedgo/internal/modules/auth"
+	"seedgo/internal/modules/common"
 	"seedgo/internal/modules/dict"
 	"seedgo/internal/modules/perms"
 	"seedgo/internal/modules/role"
@@ -25,7 +26,10 @@ func InitRouter() *gin.Engine {
 	//认证
 	auth.NewHandler().Use(g.Group("/auth"))
 
-	// 权限校验
+	// 公共 (仅需登录)
+	common.NewHandler().Use(g.Group("/common", middleware.AuthMiddleware()))
+
+	// 其他(登录+权限校验)
 	g.Use(middleware.AuthMiddleware(), middleware.PermissionsMiddleware())
 	{
 		//权限资源

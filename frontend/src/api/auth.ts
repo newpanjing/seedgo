@@ -36,14 +36,14 @@ export function logout() {
 
 export function getUserInfo() {
   return request({
-    url: '/auth/me',
+    url: '/common/user/profile',
     method: 'get',
   })
 }
 
 export function updateUserInfo(data: { name?: string; phone?: string; email?: string }) {
   return request({
-    url: '/auth/profile',
+    url: '/common/user/profile',
     method: 'post',
     data,
   })
@@ -51,7 +51,7 @@ export function updateUserInfo(data: { name?: string; phone?: string; email?: st
 
 export function changePassword(data: any) {
   return request({
-    url: '/auth/change-password',
+    url: '/common/user/change-password',
     method: 'post',
     data,
   })

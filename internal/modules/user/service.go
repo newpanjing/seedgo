@@ -8,6 +8,7 @@ import (
 	"seedgo/internal/modules/perms"
 	"seedgo/internal/shared"
 	"seedgo/pkg"
+	"sync"
 	"time"
 
 	"gorm.io/gorm"
@@ -21,6 +22,20 @@ func NewService() *Service {
 	return &Service{
 		BaseService: shared.NewBaseService[model.User](),
 	}
+}
+
+// 单例模式
+var (
+	instance *Service
+	once     sync.Once
+)
+
+// GetService 获取单例实例
+func GetService() *Service {
+	once.Do(func() {
+		instance = NewService()
+	})
+	return instance
 }
 
 func (s *Service) Login(ctx context.Context, dto form.LoginDTO) (*form.LoginVO, error) {

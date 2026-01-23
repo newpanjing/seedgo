@@ -3,13 +3,13 @@ package main
 import (
 	"log"
 	"seedgo/internal/db"
-	global2 "seedgo/internal/global"
+	"seedgo/internal/global"
 	"seedgo/internal/model"
 )
 
 func main() {
 	// 初始化配置和数据库
-	global2.InitConfig("config/local.yaml")
+	global.InitConfig("config/local.yaml")
 	db.InitDB()
 
 	// 自动迁移
@@ -17,30 +17,30 @@ func main() {
 	// 例如: &model.User{}
 	// 请在添加业务 Model 后，导入 internal/model 包并将 Model 实例放入 AutoMigrate
 	// 1. 先迁移租户表
-	global2.DB.AutoMigrate(&model.Tenant{})
+	global.DB.AutoMigrate(&model.Tenant{})
 
 	// 2. 检查并创建默认租户
 	var count int64
-	global2.DB.Model(&model.Tenant{}).Count(&count)
+	global.DB.Model(&model.Tenant{}).Count(&count)
 	var defaultTenantID model.ID
 	if count == 0 {
 		t := model.Tenant{
 			Name:   "Default Tenant",
 			Status: 1,
 		}
-		global2.DB.Create(&t)
+		global.DB.Create(&t)
 		log.Printf("Created default tenant with ID: %d", t.ID)
 		defaultTenantID = t.ID
 	} else {
 		var t model.Tenant
-		global2.DB.First(&t)
+		global.DB.First(&t)
 		defaultTenantID = t.ID
 	}
 
 	// 修复存量数据：将所有用户的 tenant_id 更新为默认租户 ID (确保外键约束通过)
 	if defaultTenantID > 0 {
 		// 使用原生 SQL 确保更新成功，不依赖 GORM 模型状态
-		result := global2.DB.Exec("UPDATE `user` SET tenant_id = ? WHERE tenant_id = 0 OR tenant_id IS NULL", defaultTenantID)
+		result := global.DB.Exec("UPDATE `user` SET tenant_id = ? WHERE tenant_id = 0 OR tenant_id IS NULL", defaultTenantID)
 		if result.Error != nil {
 			log.Printf("Failed to update legacy users: %v", result.Error)
 		} else {
@@ -49,7 +49,7 @@ func main() {
 	}
 
 	// 3. 迁移其他表
-	err := global2.DB.AutoMigrate(
+	err := global.DB.AutoMigrate(
 		&model.Tenant{},
 		&model.User{},
 		&model.Role{},

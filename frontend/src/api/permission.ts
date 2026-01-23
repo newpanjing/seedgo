@@ -15,7 +15,7 @@ export interface Permission {
 
 export function getPermissionTree(params?: any) {
   return request<Permission[]>({
-    url: '/system/permissions/tree',
+    url: '/common/user/permissions',
     method: 'get',
     params
   })

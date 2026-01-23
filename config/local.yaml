@@ -10,18 +10,14 @@ jwt:
   secret: "smart_butler_secret_key"
   expire: 2592000 # 30d
 
+# 登录接口白名单
 auth:
   public_paths:
     - "/api/auth/login"
     - "/api/ping"
     - "/favicon.ico"
 
+# 登录后权限排除的接口
 permission:
   exclude_paths:
     - "/api/auth/logout"
-    - "/api/user/profile"
-    - "/api/auth/me"
-    - '/api/system/permissions/tree'
-    - '/api/public/tenant/tenants'
-    - '/api/public/system/dicts'
-    - "/api/dosc"

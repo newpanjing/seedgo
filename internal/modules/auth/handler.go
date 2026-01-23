@@ -20,10 +20,7 @@ func NewHandler() *Handler {
 
 func (h *Handler) Use(g *gin.RouterGroup) {
 	g.POST("/login", h.Login)
-	g.GET("/me", h.GetMe)
-	g.POST("/profile", h.UpdateProfile)
 	g.POST("/logout", h.Logout)
-	g.POST("/change-password", h.ChangePassword)
 }
 
 func (h *Handler) GetMe(ctx *gin.Context) {
