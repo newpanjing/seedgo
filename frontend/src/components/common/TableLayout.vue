@@ -290,8 +290,12 @@ const hasOperation = computed(() => {
                 </Transition>
             </div>
             <!-- Pagination -->
-            <Pagination v-if="!noPagination" :page="page" :page-size="pageSize" :total="total" :loading="loading"
-                @update:page="(val: number) => page = val" />
+            <Pagination v-if="!noPagination" 
+                v-model:page="page" 
+                v-model:page-size="pageSize" 
+                :total="total" 
+                :loading="loading" 
+            />
         </div>
 
     </div>

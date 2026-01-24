@@ -3,20 +3,30 @@ import { computed, ref, watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-vue-next'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface Props {
   page: number
   pageSize: number
   total: number
   loading?: boolean
+  pageSizeOptions?: number[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  loading: false
+  loading: false,
+  pageSizeOptions: () => [10, 20, 50, 100]
 })
 
 const emit = defineEmits<{
   (e: 'update:page', value: number): void
+  (e: 'update:pageSize', value: number): void
   (e: 'change'): void
 }>()
 
@@ -35,6 +45,14 @@ const totalPages = computed(() => Math.ceil(props.total / props.pageSize))
 const handlePageChange = (newPage: number) => {
   if (newPage < 1 || newPage > totalPages.value) return
   emit('update:page', newPage)
+  emit('change')
+}
+
+const handlePageSizeChange = (val: string) => {
+  const newSize = Number(val)
+  emit('update:pageSize', newSize)
+  // Reset to page 1 when page size changes to avoid out of bounds
+  emit('update:page', 1)
   emit('change')
 }
 
@@ -115,6 +133,22 @@ const handleJump = () => {
       <span class="font-medium text-foreground">{{ pageStart }}-{{ pageEnd }}</span>
     </div>
     <div class="flex items-center gap-4">
+      <!-- Page Size Select -->
+      <div class="flex items-center gap-2">
+        <span class="whitespace-nowrap">每页</span>
+        <Select :model-value="String(pageSize)" @update:model-value="handlePageSizeChange">
+          <SelectTrigger class="h-8 w-[70px]">
+            <span>{{ pageSize }}</span>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem v-for="size in pageSizeOptions" :key="size" :value="String(size)">
+              {{ size }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        <span class="whitespace-nowrap">条</span>
+      </div>
+
       <div class="flex items-center gap-2" v-if="totalPages > 1">
         <Button
           variant="outline"
