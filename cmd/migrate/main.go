@@ -5,6 +5,7 @@ import (
 	"seedgo/internal/db"
 	"seedgo/internal/global"
 	"seedgo/internal/model"
+	"seedgo/pkg"
 )
 
 func main() {
@@ -37,6 +38,9 @@ func main() {
 		defaultTenantID = t.ID
 	}
 
+	// 确保User表存在
+	global.DB.AutoMigrate(&model.User{})
+
 	// 修复存量数据：将所有用户的 tenant_id 更新为默认租户 ID (确保外键约束通过)
 	if defaultTenantID > 0 {
 		// 使用原生 SQL 确保更新成功，不依赖 GORM 模型状态
@@ -46,6 +50,9 @@ func main() {
 		} else {
 			log.Printf("Updated %d legacy users to tenant ID %d", result.RowsAffected, defaultTenantID)
 		}
+
+		// 检查并创建超级用户
+		createDefaultSuperUser(defaultTenantID)
 	}
 
 	// 3. 迁移其他表
@@ -62,4 +69,37 @@ func main() {
 	}
 
 	log.Println("Migration completed successfully")
+}
+
+func createDefaultSuperUser(tenantID model.ID) {
+	var count int64
+	// 检查是否存在超级用户
+	if err := global.DB.Model(&model.User{}).Where("is_super = ?", true).Count(&count).Error; err != nil {
+		log.Printf("Failed to check super user: %v", err)
+		return
+	}
+
+	if count == 0 {
+		password, err := pkg.HashPassword("123456")
+		if err != nil {
+			log.Printf("Failed to hash password: %v", err)
+			return
+		}
+
+		isSuper := true
+		user := model.User{
+			Username:     "admin",
+			PasswordHash: password,
+			IsSuper:      &isSuper,
+		}
+		user.TenantID = tenantID
+		user.Status = new(int8)
+		*user.Status = 1 // 正常状态
+
+		if err := global.DB.Create(&user).Error; err != nil {
+			log.Printf("Failed to create super user: %v", err)
+		} else {
+			log.Printf("Created default super user 'admin' with ID: %d", user.ID)
+		}
+	}
 }

@@ -5,25 +5,25 @@ import (
 	"log"
 	"seedgo/internal/api"
 	"seedgo/internal/db"
-	global2 "seedgo/internal/global"
+	"seedgo/internal/global"
 	"seedgo/pkg/cache"
 )
 
 func main() {
 	// 1. 初始化配置
-	global2.InitConfig("config/local.yaml")
+	global.InitConfig("config/local.yaml")
 
 	// 2. 初始化数据库
 	db.InitDB()
 
 	// 3. 初始化缓存
-	global2.Cache = cache.Use(cache.NewMemoryCache())
+	global.Cache = cache.Use(cache.NewMemoryCache())
 
 	// 4. 初始化路由
 	r := api.InitRouter()
 
 	// 4. 启动服务
-	port := global2.Config.Server.Port
+	port := global.Config.Server.Port
 	if port == 0 {
 		port = 3000
 	}
