@@ -14,10 +14,10 @@ const props = defineProps({
     }
 })
 
-const diaplay = computed(() => {
+const display = computed(() => {
     return formatDate(props.value, props.format)
 })
 </script>
 <template>
-    {{ diaplay }}
+    {{ display }}
 </template>

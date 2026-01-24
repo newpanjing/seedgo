@@ -1,77 +1,178 @@
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import { Input } from '@/components/ui/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+<script setup lang="tsx">
+import { ref, computed, reactive } from 'vue'
+import { TableColumn } from '@/types/column'
+import { getOperationLogs, type OperationLog } from '@/api/operation-log'
 import { Badge } from '@/components/ui/badge'
+import { Eye } from 'lucide-vue-next'
+import { Button } from '@/components/ui/button'
+import FormSheet from '@/components/common/form/FormSheet.vue'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import DateRangeSelect from '@/components/common/DateRangeSelect.vue'
 
-type Log = {
-  id: number
-  module: string
-  action: string
-  username?: string
-  ip?: string
-  status: 0 | 1
-  createdAt: string
-}
+import TableCellFormat from '@/components/common/TableCellFormat.vue'
 
-const search = ref('')
-const logs = ref<Log[]>([
-  { id: 1, module: '系统管理', action: '新增角色', username: 'Admin', ip: '10.0.0.1', status: 1, createdAt: '2026-01-16 10:00:00' },
-  { id: 2, module: '门店管理', action: '编辑门店', username: 'Admin', ip: '10.0.0.1', status: 1, createdAt: '2026-01-16 10:10:00' },
-  { id: 3, module: '账号管理', action: '停用账号', username: '店长王雷', ip: '10.0.0.2', status: 0, createdAt: '2026-01-16 10:30:00' },
+// Filters
+const status = ref<string>('')
+const dateRange = ref<[string | undefined, string | undefined]>([undefined, undefined])
+
+const columns = computed<TableColumn[]>(() => [
+  {
+    label: '模块/操作',
+    field: 'module',
+    formatter: (_: any, row: OperationLog) => (
+      <div class="flex flex-col gap-1">
+        <div class="font-medium">{row.method}</div>
+        <div class="text-xs text-muted-foreground truncate max-w-[200px]" title={row.path}>{row.path}</div>
+      </div>
+    )
+  },
+  { label: '用户', field: 'username' },
+  { label: 'IP', field: 'ip' },
+  {
+    label: '状态',
+    field: 'status',
+    formatter: (val: number) => (
+      <Badge variant="outline" class={val >= 200 && val < 300 ? 'text-green-600 border-green-200 bg-green-50' : 'text-red-600 border-red-200 bg-red-50'}>
+        {val}
+      </Badge>
+    )
+  },
+  {
+    label: '耗时',
+    field: 'latency',
+    formatter: (val: number) => <span class={val > 1000 ? 'text-orange-500' : ''}>{val}ms</span>
+  },
+  { 
+    label: '操作时间', 
+    field: 'operationTime', 
+    sortable: true,
+    formatter: (val: any) => <TableCellFormat value={val} />
+  }
 ])
 
-const filtered = computed(() => {
-  if (!search.value) return logs.value
-  return logs.value.filter(i => i.module.includes(search.value) || i.action.includes(search.value) || (i.username || '').includes(search.value))
-})
+const tableLayoutRef = ref()
+const refreshTable = () => {
+  tableLayoutRef.value?.fetchData()
+}
+
+const fetchData = async (params: any) => {
+  const res = (await getOperationLogs({
+    ...params,
+    status: status.value ? Number(status.value) : undefined,
+    startDate: dateRange.value?.[0],
+    endDate: dateRange.value?.[1],
+  })) as any
+  return {
+    total: res.total,
+    items: res.items
+  }
+}
+
+// Detail View
+const isViewOpen = ref(false)
+const viewedLog = ref<OperationLog | null>(null)
+
+const handleView = (log: OperationLog) => {
+  viewedLog.value = log
+  isViewOpen.value = true
+}
+
+// Helper to format JSON or large text
+const formatJson = (str: string) => {
+  try {
+    return JSON.stringify(JSON.parse(str), null, 2)
+  } catch {
+    return str
+  }
+}
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <div>
-        <h1 class="text-2xl font-bold tracking-tight">操作日志</h1>
-        <p class="text-sm text-muted-foreground mt-1">记录后台重要操作行为。</p>
-      </div>
-    </div>
+  <div>
+    <TableLayout
+      ref="tableLayoutRef"
+      title="操作日志"
+      :columns="columns"
+      :fetch-data="fetchData"
+      :show-create="false"
+      :show-update="false"
+      :show-delete="false"
+      :checkable="false"
+    >
+      <template #filters>
+        <Select v-model="status" @update:model-value="refreshTable">
+          <SelectTrigger class="w-[120px] h-8">
+            <SelectValue placeholder="状态" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">全部</SelectItem>
+            <SelectItem value="200">成功</SelectItem>
+            <SelectItem value="500">失败</SelectItem>
+          </SelectContent>
+        </Select>
+        <DateRangeSelect v-model="dateRange" @update:model-value="refreshTable" class="h-8" />
+      </template>
 
-    <div class="bg-card rounded-xl shadow-sm border border-border p-4">
-      <div class="relative max-w-sm w-full">
-        <Input v-model="search" placeholder="按模块、操作或用户名搜索" />
-      </div>
-    </div>
+      <template #actions="{ Row }">
+        <Button variant="ghost" size="icon" class="h-8 w-8" @click="handleView(Row)" title="查看详情">
+          <Eye class="w-4 h-4" />
+        </Button>
+      </template>
+    </TableLayout>
 
-    <div class="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>模块</TableHead>
-            <TableHead>操作</TableHead>
-            <TableHead>用户</TableHead>
-            <TableHead>IP</TableHead>
-            <TableHead>状态</TableHead>
-            <TableHead>时间</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow v-for="item in filtered" :key="item.id">
-            <TableCell class="text-sm font-semibold">{{ item.module }}</TableCell>
-            <TableCell class="text-sm">{{ item.action }}</TableCell>
-            <TableCell class="text-sm">{{ item.username }}</TableCell>
-            <TableCell class="text-xs text-muted-foreground">{{ item.ip }}</TableCell>
-            <TableCell>
-              <Badge
-                variant="outline"
-                :color="item.status===1 ? 'green' : 'red'"
-              >
-                {{ item.status===1 ? '成功' : '失败' }}
+    <FormSheet :visible="isViewOpen" @update:visible="isViewOpen = $event" title="日志详情">
+      <div v-if="viewedLog" class="space-y-6">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <Label class="text-muted-foreground">操作用户</Label>
+            <div class="mt-1 font-medium">{{ viewedLog.username || '-' }} (ID: {{ viewedLog.userId }})</div>
+          </div>
+          <div>
+            <Label class="text-muted-foreground">客户端IP</Label>
+            <div class="mt-1 font-medium">{{ viewedLog.ip }}</div>
+          </div>
+          <div>
+            <Label class="text-muted-foreground">请求方式</Label>
+            <div class="mt-1 font-medium">{{ viewedLog.method }}</div>
+          </div>
+          <div>
+            <Label class="text-muted-foreground">状态码</Label>
+            <div class="mt-1">
+              <Badge variant="outline" :class="viewedLog.status >= 200 && viewedLog.status < 300 ? 'text-green-600 border-green-200 bg-green-50' : 'text-red-600 border-red-200 bg-red-50'">
+                {{ viewedLog.status }}
               </Badge>
-            </TableCell>
-            <TableCell class="text-xs text-muted-foreground">{{ item.createdAt }}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-    </div>
+            </div>
+          </div>
+          <div class="col-span-2">
+            <Label class="text-muted-foreground">请求路径</Label>
+            <div class="mt-1 font-mono text-sm break-all bg-muted p-2 rounded">{{ viewedLog.path }}</div>
+          </div>
+           <div class="col-span-2">
+            <Label class="text-muted-foreground">User Agent</Label>
+            <div class="mt-1 text-sm text-muted-foreground break-all">{{ viewedLog.userAgent }}</div>
+          </div>
+          <div class="col-span-2" v-if="viewedLog.query">
+            <Label class="text-muted-foreground">Query 参数</Label>
+            <pre class="mt-1 font-mono text-xs bg-muted p-2 rounded overflow-x-auto">{{ viewedLog.query }}</pre>
+          </div>
+          <div class="col-span-2" v-if="viewedLog.body">
+            <Label class="text-muted-foreground">请求体</Label>
+            <pre class="mt-1 font-mono text-xs bg-muted p-2 rounded overflow-x-auto whitespace-pre-wrap">{{ formatJson(viewedLog.body) }}</pre>
+          </div>
+          <div class="col-span-2" v-if="viewedLog.errorMessage">
+            <Label class="text-muted-foreground text-red-500">错误信息</Label>
+            <pre class="mt-1 font-mono text-xs bg-red-50 text-red-600 p-2 rounded overflow-x-auto whitespace-pre-wrap">{{ viewedLog.errorMessage }}</pre>
+          </div>
+        </div>
+      </div>
+    </FormSheet>
   </div>
 </template>
+

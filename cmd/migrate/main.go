@@ -54,6 +54,7 @@ func main() {
 		&model.User{},
 		&model.Role{},
 		&model.Permission{},
+		&model.OperationLog{},
 	)
 
 	if err != nil {

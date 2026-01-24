@@ -5,6 +5,7 @@ import (
 	"seedgo/internal/modules/auth"
 	"seedgo/internal/modules/common"
 	"seedgo/internal/modules/dict"
+	"seedgo/internal/modules/log"
 	"seedgo/internal/modules/perms"
 	"seedgo/internal/modules/role"
 	"seedgo/internal/modules/tenant"
@@ -30,7 +31,7 @@ func InitRouter() *gin.Engine {
 	common.NewHandler().Use(g.Group("/common", middleware.AuthMiddleware()))
 
 	// 其他(登录+权限校验)
-	g.Use(middleware.AuthMiddleware(), middleware.PermissionsMiddleware())
+	g.Use(middleware.AuthMiddleware(), middleware.OperationLogMiddleware(), middleware.PermissionsMiddleware())
 	{
 		//权限资源
 		perms.NewHandler().Use(g.Group("system/permissions"))
@@ -42,6 +43,8 @@ func InitRouter() *gin.Engine {
 		tenant.NewHandler().Use(g.Group("tenant/tenants"))
 		//字典
 		dict.NewHandler().Use(g.Group("system/dicts"))
+		//操作日志
+		log.NewHandler().Use(g.Group("system/operation-logs"))
 	}
 
 	return r
