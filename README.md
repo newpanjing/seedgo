@@ -36,11 +36,22 @@ Web 应用程序。
 
 ### 后端
 
++ 手动配置
+
 - 在`config/local.yaml`中配置数据库连接信息。
 
 ```yaml
 database:
   dsn: "root:123456@tcp(127.0.0.1:3306)/smart?charset=utf8mb4&parseTime=True&loc=Local"
+```
+
++ docker配置MySQL
+
+如果你想简单一点，直接在docker目录用docker-compose运行命令即可，配置文件都不用动
+
+```shell
+cd docker
+docker-compose up -d
 ```
 
 + 生成表结构和创建admin用户
