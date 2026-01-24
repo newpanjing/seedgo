@@ -292,7 +292,7 @@ const hasOperation = computed(() => {
             <!-- Pagination -->
             <Pagination v-if="!noPagination" 
                 v-model:page="page" 
-                v-model:page-size="pageSize" 
+                v-model:pageSize="pageSize" 
                 :total="total" 
                 :loading="loading" 
             />

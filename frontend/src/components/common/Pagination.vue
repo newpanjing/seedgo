@@ -127,7 +127,7 @@ const handleJump = () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between px-4 py-3 border-t border-border bg-muted/30 text-xs text-muted-foreground">
+  <div class="flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-t border-border bg-muted/30 text-xs text-muted-foreground">
     <div>
       共 {{ total }} 条记录，当前显示
       <span class="font-medium text-foreground">{{ pageStart }}-{{ pageEnd }}</span>
