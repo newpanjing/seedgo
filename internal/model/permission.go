@@ -17,3 +17,10 @@ type Permission struct {
 func (p *Permission) TableName() string {
 	return "permission"
 }
+
+// SearchFields 默认搜索字段
+func (p *Permission) SearchFields() []string {
+	return []string{"name"}
+}
+
+var _ Searchable = (*Permission)(nil)

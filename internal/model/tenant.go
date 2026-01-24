@@ -16,6 +16,12 @@ type Tenant struct {
 	Phone    string `gorm:"-" json:"phone,omitempty"`
 }
 
+func (t Tenant) SearchFields() []string {
+	return []string{"name"}
+}
+
 func (Tenant) TableName() string {
 	return "tenant"
 }
+
+var _ Searchable = (*Tenant)(nil)

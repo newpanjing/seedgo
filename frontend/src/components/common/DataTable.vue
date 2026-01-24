@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils';
-import { TableColumn } from '@/types/column';
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronRight } from 'lucide-vue-next';
-import type { HTMLAttributes } from 'vue';
-import { computed, defineComponent, h, type PropType, ref, watch } from 'vue';
+import {cn} from '@/lib/utils';
+import {TableColumn} from '@/types/column';
+import {ArrowDown, ArrowUp, ArrowUpDown, ChevronDown, ChevronRight} from 'lucide-vue-next';
+import type {HTMLAttributes} from 'vue';
+import {computed, defineComponent, h, type PropType, ref, watch} from 'vue';
 import TableCellFormat from './TableCellFormat.vue';
 
 const CellRenderer = defineComponent({
@@ -203,7 +203,7 @@ const alignFlex = (column: TableColumn) => column.align === 'center' ? 'justify-
                     </th>
                     <th v-for="column in visibleColumns" :key="column.field" @click="handleSort(column)"
                     :class="cn('h-12 px-4 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0', align(column), column.sortable && 'cursor-pointer select-none hover:text-foreground')"
-                    :style="{ width: column.width }">
+                    :style="{ width: column.width, minWidth: column.minWidth }">
                     <div :class="cn('flex items-center gap-2', alignFlex(column))">
                         {{ column.label }}
                         <template v-if="column.sortable">
