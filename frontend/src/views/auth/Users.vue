@@ -64,7 +64,7 @@ const columns = reactive<TableColumn[]>([
       return (
         <div class="flex items-center gap-2">
           <Avatar class="h-8 w-8">
-            <AvatarImage src={row.avatar} />
+            <AvatarImage src={row.avatar || ''} />
             <AvatarFallback>{value ? value.substring(0, 2).toUpperCase() : 'U'}</AvatarFallback>
           </Avatar>
           <span class="font-medium">{value}</span>

@@ -317,7 +317,7 @@ onBeforeUnmount(() => {
         <DropdownMenuTrigger as-child>
           <Button variant="ghost" class="relative h-9 w-9 rounded-full p-0 overflow-hidden">
             <Avatar class="h-9 w-9">
-              <AvatarImage :src="authStore.currentUser?.avatar" alt="User avatar" />
+              <AvatarImage :src="authStore.currentUser?.avatar || ''" alt="User avatar" />
               <AvatarFallback class="bg-primary/10 text-primary font-medium">
                 {{ (authStore.currentUser?.realName || authStore.currentUser?.name || authStore.currentUser?.username || 'A').charAt(0).toUpperCase() }}
               </AvatarFallback>
@@ -329,7 +329,7 @@ onBeforeUnmount(() => {
             <div class="flex flex-col space-y-1">
               <div class="flex items-center gap-2 px-1 py-1.5">
                 <Avatar class="h-8 w-8">
-                  <AvatarImage :src="authStore.currentUser?.avatar" alt="User avatar" />
+                  <AvatarImage :src="authStore.currentUser?.avatar || ''" alt="User avatar" />
                   <AvatarFallback class="bg-primary/10 text-primary font-medium">
                     {{ (authStore.currentUser?.realName || authStore.currentUser?.name || authStore.currentUser?.username || 'A').charAt(0).toUpperCase() }}
                   </AvatarFallback>

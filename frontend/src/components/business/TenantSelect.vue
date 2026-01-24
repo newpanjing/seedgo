@@ -33,7 +33,6 @@ const fetchTenants = async (keyword = '') => {
       sortBy: 'createdAt',
       sortOrder: 'desc'
     }) as any
-    console.log('Tenants loaded:',  res.items)
     tenants.value = res.items || []
   } catch (error) {
     console.error('Failed to fetch tenants:', error)

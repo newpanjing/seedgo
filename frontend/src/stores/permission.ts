@@ -104,7 +104,6 @@ export const usePermissionStore = defineStore('permission', () => {
       // res is the array because request interceptor returns res.data
 
       const items = Array.isArray(res) ? res : []
-      console.log('Raw permissions:', items)
       permissions.value.clear()
       menuPaths.value.clear()
       rawPermissions.value = items // Store raw tree
@@ -112,7 +111,6 @@ export const usePermissionStore = defineStore('permission', () => {
       menuTree.value = processMenuTree(items)
 
     } catch (error) {
-      console.error('Failed to fetch permissions', error)
       menuTree.value = []
       rawPermissions.value = []
       permissions.value.clear()
@@ -200,7 +198,6 @@ export interface ModulePermissions {
 export const usePerms = ():any => {
   const store = usePermissionStore()
   const authStore = useAuthStore()
-  const route = useRoute() || router.currentRoute.value
 
   const perms = computed<ModulePermissions>(() => {
     // If super user, return all permissions true
@@ -215,7 +212,8 @@ export const usePerms = ():any => {
       }
     }
 
-    const codes = store.getModulePermissions(route.path)
+    const currentRoute = router.currentRoute.value
+    const codes = store.getModulePermissions(currentRoute.path)
     const p: ModulePermissions = {
       create: false,
       update: false,
@@ -248,6 +246,6 @@ export const usePerms = ():any => {
       return store.hasPermission(code)
     },
     //当前模块的所有权限
-    permissions: computed(() => store.getModulePermissions(route.path))
+    permissions: computed(() => store.getModulePermissions(router.currentRoute.value.path))
   }
 }
