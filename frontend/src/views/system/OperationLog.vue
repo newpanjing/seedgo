@@ -1,5 +1,5 @@
 <script setup lang="tsx">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { TableColumn } from '@/types/column'
 import { getOperationLogs, type OperationLog } from '@/api/operation-log'
 import { Badge } from '@/components/ui/badge'
@@ -18,11 +18,16 @@ import DateRangeSelect from '@/components/common/DateRangeSelect.vue'
 
 import TableCellFormat from '@/components/common/TableCellFormat.vue'
 
+const isMounted = ref(false)
+onMounted(() => {
+  isMounted.value = true
+})
+
 // Filters
 const status = ref<string>('')
 const dateRange = ref<[string | undefined, string | undefined]>([undefined, undefined])
 
-const columns = computed<TableColumn[]>(() => [
+const columns: TableColumn[] = [
   {
     label: '模块/操作',
     field: 'module',
@@ -55,7 +60,7 @@ const columns = computed<TableColumn[]>(() => [
     sortable: true,
     formatter: (val: any) => <TableCellFormat value={val} />
   }
-])
+]
 
 const tableLayoutRef = ref()
 const refreshTable = () => {
@@ -107,16 +112,16 @@ const formatJson = (str: string) => {
       :checkable="false"
     >
       <template #filters>
-        <Select v-model="status" @update:model-value="refreshTable">
-          <SelectTrigger class="w-[120px] h-8">
-            <SelectValue placeholder="状态" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">全部</SelectItem>
-            <SelectItem value="200">成功</SelectItem>
-            <SelectItem value="500">失败</SelectItem>
-          </SelectContent>
-        </Select>
+        <select 
+            v-model="status" 
+            @change="refreshTable"
+            class="h-8 w-[120px] appearance-none rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        >
+            <option value="" disabled selected>状态</option>
+            <option value="">全部</option>
+            <option value="200">成功</option>
+            <option value="500">失败</option>
+        </select>
         <DateRangeSelect v-model="dateRange" @update:model-value="refreshTable" class="h-8" />
       </template>
 

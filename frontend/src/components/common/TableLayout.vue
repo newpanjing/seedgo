@@ -2,7 +2,7 @@
 import { showConfirm } from '@/lib/message'
 import { TableColumn } from '@/types/column'
 //导入图标
-import { Search, Plus, RefreshCw, Loader2, Trash2 } from 'lucide-vue-next'
+import { Search, Plus, RefreshCw, Loader2, Trash2, Eye, Edit } from 'lucide-vue-next'
 
 
 
@@ -51,16 +51,18 @@ const props = defineProps({
 })
 
 const columns = computed(() => {
+    // 创建一个副本，避免直接修改 props
+    const newColumns = [...props.columns]
     //如果没有名为operation的列，添加一个
-    if (!props.columns.some(column => column.field === 'operation')) {
-        props.columns.push({
+    if (!newColumns.some(column => column.field === 'operation')) {
+        newColumns.push({
             label: '操作',
             field: 'operation',
             width: '100px',
             align: 'center'
         })
     }
-    return props.columns
+    return newColumns
 })
 
 const emit = defineEmits(['save', 'delete', 'update', 'view', 'create', 'selection-change', 'batch-delete'])
@@ -262,32 +264,28 @@ const hasOperation = computed(() => {
         <div class="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
             <!-- table -->
             <div class="relative min-h-[200px]">
-                <Transition name="fade">
-                    <div v-if="loading"
-                        class="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
-                        <Loader2 class="w-8 h-8 animate-spin text-primary" />
-                    </div>
-                </Transition>
-                <Transition name="fade">
-                    <FetchDataError v-if="error.hasError" :message="error.message" @retry="fetchData" />
-                    <DataTable v-else
-                        :class="{ 'transition-opacity duration-300': true, 'opacity-50 pointer-events-none': loading }"
-                        :columns="columns" :items="items" :sort-by="sortBy" :sort-order="sortOrder"
-                        :checkable="checkable" :operation="hasOperation" :default-expand-level="defaultExpandLevel"
-                        :should-expand-node="shouldExpandNode" @sort="handleSort"
-                        @selection-change="handleSelectionChange">
-                        <template #actions="{ row }">
-                            <div class="flex items-center justify-end gap-1">
-                                <slot name="actions" :View="() => ViewBtn(row)" :Update="() => UpdateBtn(row)"
-                                    :Delete="() => DeleteBtn(row)" :Row="row">
-                                    <component v-if="showView" :is="ViewBtn(row)" />
-                                    <component v-if="showUpdate" :is="UpdateBtn(row)" />
-                                    <component v-if="showDelete" :is="DeleteBtn(row)" />
-                                </slot>
-                            </div>
-                        </template>
-                    </DataTable>
-                </Transition>
+                <div v-if="loading"
+                    class="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-[1px]">
+                    <Loader2 class="w-8 h-8 animate-spin text-primary" />
+                </div>
+                <FetchDataError v-if="error.hasError" :message="error.message" @retry="fetchData" />
+                <DataTable v-else
+                    :class="{ 'transition-opacity duration-300': true, 'opacity-50 pointer-events-none': loading }"
+                    :columns="columns" :items="items" :sort-by="sortBy" :sort-order="sortOrder"
+                    :checkable="checkable" :operation="hasOperation" :default-expand-level="defaultExpandLevel"
+                    :should-expand-node="shouldExpandNode" @sort="handleSort"
+                    @selection-change="handleSelectionChange">
+                    <template #actions="{ row }">
+                        <div class="flex items-center justify-end gap-1">
+                            <slot name="actions" :View="() => ViewBtn(row)" :Update="() => UpdateBtn(row)"
+                                :Delete="() => DeleteBtn(row)" :Row="row">
+                                <component v-if="showView" :is="ViewBtn(row)" />
+                                <component v-if="showUpdate" :is="UpdateBtn(row)" />
+                                <component v-if="showDelete" :is="DeleteBtn(row)" />
+                            </slot>
+                        </div>
+                    </template>
+                </DataTable>
             </div>
             <!-- Pagination -->
             <Pagination v-if="!noPagination" 
@@ -302,13 +300,4 @@ const hasOperation = computed(() => {
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
-}
 </style>

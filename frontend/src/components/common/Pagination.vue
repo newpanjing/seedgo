@@ -3,13 +3,6 @@ import { computed, ref, watch } from 'vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-vue-next'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 
 interface Props {
   page: number
@@ -129,24 +122,20 @@ const handleJump = () => {
 <template>
   <div class="flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-t border-border bg-muted/30 text-xs text-muted-foreground">
     <div>
-      共 {{ total }} 条记录，当前显示
-      <span class="font-medium text-foreground">{{ pageStart }}-{{ pageEnd }}</span>
+      共 {{ total }} 条
     </div>
     <div class="flex items-center gap-4">
       <!-- Page Size Select -->
-      <div class="flex items-center gap-2">
-        <span class="whitespace-nowrap">每页</span>
-        <Select :model-value="String(pageSize)" @update:model-value="handlePageSizeChange">
-          <SelectTrigger class="h-8 w-[70px]">
-            <span>{{ pageSize }}</span>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem v-for="size in pageSizeOptions" :key="size" :value="String(size)">
-              {{ size }}
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <span class="whitespace-nowrap">条</span>
+      <div class="relative">
+          <select 
+            :value="pageSize" 
+            @change="e => handlePageSizeChange((e.target as HTMLSelectElement).value)"
+            class="h-8 w-[100px] appearance-none rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <option v-for="size in pageSizeOptions" :key="size" :value="size">
+                {{ size }} 条/页
+            </option>
+          </select>
       </div>
 
       <div class="flex items-center gap-2" v-if="totalPages > 1">
@@ -189,17 +178,16 @@ const handleJump = () => {
 
       <!-- Jump to Page -->
       <div class="flex items-center gap-2" v-if="totalPages > 1">
-        <span>前往</span>
+        <span>跳至</span>
         <Input
             v-model="jumpPage"
             type="number"
             :min="1"
             :max="totalPages"
-            class="h-8 w-14 px-1 text-center"
+            class="h-8 w-12 px-1 text-center"
             @keydown.enter="handleJump"
             @blur="handleJump"
         />
-        <span>页</span>
       </div>
     </div>
   </div>
